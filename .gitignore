@@ -1,0 +1,16 @@
+# Marqueurs Windows laissés par les téléchargements (WSL)
+*Zone.Identifier
+
+# Système / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs et archives
+*.log
+*.zip
+*.tar.gz
+
+# Déploiement local (contient l'accès au serveur)
+.deploy.env

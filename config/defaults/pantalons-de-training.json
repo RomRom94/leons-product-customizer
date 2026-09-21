@@ -1,0 +1,46 @@
+{
+  "enabled": true,
+  "views": {
+    "front": {
+      "label": "Face",
+      "background_source": "variation_image"
+    }
+  },
+  "zones": {
+    "logo": {
+      "label": "Logo",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.388,
+        "y": 0.28,
+        "width": 0.073,
+        "height": 0.072,
+        "unit": "ratio"
+      }
+    },
+    "initiales": {
+      "label": "Initiales",
+      "type": "text",
+      "view": "front",
+      "price": 2.5,
+      "required": false,
+      "max_length": 4,
+      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
+      "position": {
+        "x": 0.607,
+        "y": 0.321,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.07,
+        "max_width_ratio": 0.14
+      }
+    }
+  }
+}

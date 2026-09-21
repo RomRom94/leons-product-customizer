@@ -1,0 +1,70 @@
+{
+  "enabled": true,
+  "views": {
+    "front": {
+      "label": "Face",
+      "background_source": "variation_image"
+    },
+    "back": {
+      "label": "Dos",
+      "background_source": "meta",
+      "background_meta_key": "_lpc_back_image_id"
+    }
+  },
+  "zones": {
+    "coeur": {
+      "label": "Logo cœur",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.584,
+        "y": 0.379,
+        "width": 0.06,
+        "height": 0.055,
+        "unit": "ratio"
+      }
+    },
+    "initiales": {
+      "label": "Initiales",
+      "type": "text",
+      "view": "front",
+      "price": 2.5,
+      "required": false,
+      "max_length": 3,
+      "position": {
+        "x": 0.375,
+        "y": 0.41,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.035,
+        "max_width_ratio": 0.12
+      }
+    },
+    "nom_dos": {
+      "label": "Nom dos",
+      "type": "text",
+      "view": "back",
+      "price": 7,
+      "required": false,
+      "max_length": 12,
+      "position": {
+        "x": 0.5,
+        "y": 0.18,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.05,
+        "max_width_ratio": 0.85
+      }
+    }
+  }
+}

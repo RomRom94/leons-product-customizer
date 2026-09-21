@@ -1,0 +1,133 @@
+{
+  "enabled": true,
+  "views": {
+    "front": {
+      "label": "Face",
+      "background_source": "variation_image"
+    },
+    "back": {
+      "label": "Dos",
+      "background_source": "meta",
+      "background_meta_key": "_lpc_back_image_id"
+    }
+  },
+  "zones": {
+    "coeur": {
+      "label": "Logo cœur",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.608,
+        "y": 0.323,
+        "width": 0.102,
+        "height": 0.107,
+        "unit": "ratio"
+      }
+    },
+    "initiales": {
+      "label": "Initiales",
+      "type": "text",
+      "view": "front",
+      "price": 2.5,
+      "required": false,
+      "max_length": 4,
+      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
+      "position": {
+        "x": 0.396,
+        "y": 0.388,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.035,
+        "max_width_ratio": 0.16
+      }
+    },
+    "name": {
+      "label": "Nom dos",
+      "type": "text",
+      "view": "back",
+      "price": 5,
+      "required": false,
+      "max_length": 12,
+      "position": {
+        "x": 0.5,
+        "y": 0.263,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.05,
+        "max_width_ratio": 0.85
+      }
+    },
+    "number": {
+      "label": "Numéro",
+      "type": "text",
+      "view": "back",
+      "price": 5,
+      "required": false,
+      "max_length": 2,
+      "pattern": "[0-9]{1,2}",
+      "position": {
+        "x": 0.5,
+        "y": 0.415,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.18
+      }
+    },
+    "sponsor_avant": {
+      "label": "Sponsor avant",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.501,
+        "y": 0.507,
+        "width": 0.302,
+        "height": 0.169,
+        "unit": "ratio"
+      }
+    },
+    "sponsor_dos": {
+      "label": "Sponsor dos",
+      "type": "image",
+      "view": "back",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.5,
+        "y": 0.603,
+        "width": 0.31,
+        "height": 0.127,
+        "unit": "ratio"
+      }
+    },
+    "sponsor_manche": {
+      "label": "Sponsor manche",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.75,
+        "y": 0.361,
+        "width": 0.069,
+        "height": 0.115,
+        "unit": "ratio"
+      }
+    }
+  }
+}

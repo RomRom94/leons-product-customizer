@@ -1,0 +1,32 @@
+{
+  "enabled": true,
+  "views": {
+    "front": {
+      "label": "Face",
+      "background_source": "variation_image"
+    }
+  },
+  "zones": {
+    "initiales": {
+      "label": "Initiales",
+      "type": "text",
+      "view": "front",
+      "price": 2.5,
+      "required": false,
+      "max_length": 4,
+      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
+      "position": {
+        "x": 0.5,
+        "y": 0.405,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#000000",
+        "stroke": "#FFFFFF",
+        "base_size_ratio": 0.04,
+        "max_width_ratio": 0.16
+      }
+    }
+  }
+}

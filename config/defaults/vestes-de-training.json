@@ -1,0 +1,46 @@
+{
+  "enabled": true,
+  "views": {
+    "front": {
+      "label": "Face",
+      "background_source": "variation_image"
+    }
+  },
+  "zones": {
+    "coeur": {
+      "label": "Logo cœur",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.608,
+        "y": 0.31,
+        "width": 0.089,
+        "height": 0.093,
+        "unit": "ratio"
+      }
+    },
+    "initiales": {
+      "label": "Initiales",
+      "type": "text",
+      "view": "front",
+      "price": 2.5,
+      "required": false,
+      "max_length": 4,
+      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
+      "position": {
+        "x": 0.406,
+        "y": 0.376,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.035,
+        "max_width_ratio": 0.14
+      }
+    }
+  }
+}

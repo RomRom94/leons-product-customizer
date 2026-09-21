@@ -1,0 +1,85 @@
+{
+  "enabled": true,
+  "views": {
+    "front": {
+      "label": "Face",
+      "background_source": "variation_image"
+    },
+    "back": {
+      "label": "Dos",
+      "background_source": "meta",
+      "background_meta_key": "_lpc_back_image_id"
+    }
+  },
+  "zones": {
+    "coeur": {
+      "label": "Logo cœur",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.639,
+        "y": 0.302,
+        "width": 0.103,
+        "height": 0.059,
+        "unit": "ratio"
+      }
+    },
+    "initiales": {
+      "label": "Initiales",
+      "type": "text",
+      "view": "front",
+      "price": 2.5,
+      "required": false,
+      "max_length": 4,
+      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
+      "position": {
+        "x": 0.378,
+        "y": 0.403,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.035,
+        "max_width_ratio": 0.14
+      }
+    },
+    "sponsor": {
+      "label": "Sponsor avant",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.633,
+        "y": 0.481,
+        "width": 0.166,
+        "height": 0.17,
+        "unit": "ratio"
+      }
+    },
+    "nom_dos": {
+      "label": "Nom dos",
+      "type": "text",
+      "view": "back",
+      "price": 5,
+      "required": false,
+      "max_length": 12,
+      "position": {
+        "x": 0.492,
+        "y": 0.341,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.05,
+        "max_width_ratio": 0.32
+      }
+    }
+  }
+}

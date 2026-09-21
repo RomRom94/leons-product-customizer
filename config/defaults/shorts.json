@@ -1,0 +1,65 @@
+{
+  "enabled": true,
+  "views": {
+    "front": {
+      "label": "Face",
+      "background_source": "variation_image"
+    }
+  },
+  "zones": {
+    "logo": {
+      "label": "Logo short",
+      "type": "image",
+      "view": "front",
+      "price": 7,
+      "required": false,
+      "position": {
+        "x": 0.304,
+        "y": 0.697,
+        "width": 0.129,
+        "height": 0.141,
+        "unit": "ratio"
+      }
+    },
+    "numero": {
+      "label": "Numéro",
+      "type": "text",
+      "view": "front",
+      "price": 3,
+      "required": false,
+      "max_length": 2,
+      "pattern": "[0-9]{1,2}",
+      "position": {
+        "x": 0.321,
+        "y": 0.566,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.1
+      }
+    },
+    "initiales": {
+      "label": "Initiales",
+      "type": "text",
+      "view": "front",
+      "price": 2.5,
+      "required": false,
+      "max_length": 3,
+      "position": {
+        "x": 0.665,
+        "y": 0.62,
+        "unit": "ratio"
+      },
+      "style": {
+        "font": "Slicker",
+        "color": "#FFFFFF",
+        "stroke": "#000000",
+        "base_size_ratio": 0.05,
+        "max_width_ratio": 0.2
+      }
+    }
+  }
+}

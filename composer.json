@@ -1,0 +1,15 @@
+{
+    "name": "leons-sport/product-customizer",
+    "description": "Dependances du plugin LPC (sanitization SVG pour les logos sponsor).",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "require": {
+        "php": ">=7.4",
+        "enshrined/svg-sanitize": "^0.22"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    }
+}

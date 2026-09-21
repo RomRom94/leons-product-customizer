@@ -1,0 +1,350 @@
+/*
+ * Style repris de la charte graphique du thème (storefront-child) : couleurs
+ * (noir mat / or), typographie Outfit, coins arrondis xl/lg, bordures grises,
+ * badges pastille, cards bordées — pour que le bloc personnalisation
+ * s'intègre au même niveau de finition que les composants de la homepage
+ * (banner-component, card-fabric-component…). Ce plugin n'est pas passé par
+ * Tailwind, les valeurs sont donc recopiées en dur depuis src/css/config.css
+ * du thème.
+ */
+
+.lpc-customizer {
+	margin: 0;
+	width: 100%;
+	color: #262626;
+}
+
+.lpc-customizer__title {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	margin: 0 0 1.5rem;
+	font-family: inherit;
+	font-weight: 500;
+	font-size: 1.875rem;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: #262626;
+}
+
+.lpc-customizer__title-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 9999px;
+	background-color: #262626;
+	color: #ffffff;
+	font-size: 0.9rem;
+	flex-shrink: 0;
+}
+
+.lpc-customizer__body {
+	display: block;
+}
+
+@media (min-width: 768px) {
+	.lpc-customizer__body {
+		display: grid;
+		grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+		align-items: start;
+		gap: 2rem;
+	}
+}
+
+/* ── Aperçus face / dos : cards bordées, comme les cards de la homepage ── */
+.lpc-customizer__previews {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+	.lpc-customizer__previews {
+		grid-template-columns: 1fr;
+		margin-bottom: 0;
+	}
+}
+
+.lpc-customizer__view {
+	padding: 0.75rem;
+	border: 1px solid #e5e7eb;
+	border-radius: 0.75rem;
+	background-color: #ffffff;
+}
+
+.lpc-customizer__view-label {
+	display: inline-flex;
+	align-items: center;
+	margin: 0 0 0.65rem;
+	padding: 0.2rem 0.75rem;
+	border-radius: 9999px;
+	background-color: #262626;
+	color: #ffffff;
+	font-size: 0.7rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.lpc-customizer__canvas-wrap {
+	position: relative;
+	display: block;
+	width: 100%;
+	border-radius: 0.5rem;
+	overflow: hidden;
+	background-color: #e5ecf5;
+}
+
+.lpc-customizer__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	object-fit: cover;
+}
+
+.lpc-customizer__canvas {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+/* ── Formulaire : card ivoire avec liseré doré, comme les blocs d'accent ── */
+.lpc-customizer__fields {
+	position: relative;
+	margin: 0 0 1rem;
+	padding: 1.75rem 1.5rem 1.5rem;
+	border: 1px solid #e5e7eb;
+	border-top: 3px solid #a2885f;
+	border-radius: 0.75rem;
+	background-color: #f8f3ec;
+}
+
+.lpc-customizer__fields-legend {
+	padding: 0 0.25rem;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #262626;
+}
+
+.lpc-customizer__field {
+	margin-bottom: 1.15rem;
+}
+
+.lpc-customizer__field:last-child {
+	margin-bottom: 0;
+}
+
+.lpc-customizer__field label {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom: 0.4rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #262626;
+}
+
+.lpc-customizer__zone-price {
+	display: inline-flex;
+	align-items: center;
+	margin-left: 0.4rem;
+	padding: 0.1rem 0.55rem;
+	border-radius: 9999px;
+	background-color: rgba(162, 136, 95, 0.14);
+	color: #a2885f;
+	font-size: 0.7rem;
+	font-weight: 600;
+}
+
+.lpc-customizer__field .input-text,
+.lpc-customizer__zone-input[type='text'],
+.lpc-customizer__zone-input[type='file'],
+.lpc-customizer__field--font .lpc-customizer__font-select {
+	display: block;
+	width: 100%;
+	max-width: 20rem;
+	border: 1px solid #d1d5db;
+	border-radius: 0.5rem;
+	padding: 0.55rem 1rem;
+	font-family: inherit;
+	font-size: 0.875rem;
+	color: #262626;
+	background-color: #ffffff;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lpc-customizer__field .input-text:focus,
+.lpc-customizer__zone-input:focus,
+.lpc-customizer__font-select:focus {
+	outline: none;
+	border-color: #a2885f;
+	box-shadow: 0 0 0 3px rgba(162, 136, 95, 0.16);
+}
+
+.lpc-customizer__zone-input[type='file'] {
+	padding: 0.4rem 0.75rem;
+	cursor: pointer;
+}
+
+.lpc-customizer__upload-row {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	max-width: 20rem;
+}
+
+.lpc-customizer__upload-row .lpc-customizer__zone-input[type='file'] {
+	flex: 1;
+	width: auto;
+	max-width: none;
+	min-width: 0;
+}
+
+.lpc-customizer__zone-remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 2.35rem;
+	height: 2.35rem;
+	border: 1px solid #d1d5db;
+	border-radius: 0.5rem;
+	background-color: #ffffff;
+	color: #797979;
+	font-size: 0.85rem;
+	cursor: pointer;
+	transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.lpc-customizer__zone-remove:hover {
+	border-color: #a2885f;
+	color: #a2885f;
+	background-color: rgba(162, 136, 95, 0.08);
+}
+
+.lpc-customizer__zone-remove[hidden] {
+	display: none;
+}
+
+/*
+ * `--fa-width` (utilisée par `.svg-inline--fa { width: var(--fa-width, 1.25em) }`
+ * dans la feuille de base FontAwesome) résout à 0 dans ce contexte précis (bouton
+ * flex) — cause non identifiée avec certitude, contournée en fixant la largeur en
+ * dur plutôt qu'en dépendant de la variable/fallback.
+ */
+.lpc-customizer__zone-remove .svg-inline--fa {
+	width: 1em;
+	flex-shrink: 0;
+}
+
+.lpc-customizer__field-hint {
+	display: block;
+	margin-top: 0.35rem;
+	font-size: 0.75rem;
+	color: #797979;
+}
+
+/* ── Total : bandeau plein, comme les blocs bg-primary de la homepage ──── */
+.lpc-customizer__total {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin: 1.25rem 0 0;
+	padding: 0.9rem 1.25rem;
+	border-radius: 0.75rem;
+	background-color: #262626;
+	color: #ffffff;
+	font-size: 0.8rem;
+}
+
+.lpc-customizer__total strong {
+	color: #ffffff;
+	font-size: 1.05rem;
+	font-weight: 700;
+}
+
+.lpc-customizer__field--font {
+	margin-top: 1.35rem;
+	padding-top: 1.35rem;
+	border-top: 1px solid rgba(38, 38, 38, 0.1);
+}
+
+/*
+ * `<div role="group">` à la place d'un `<fieldset>/<legend>` : un `<legend>`
+ * chevauche nativement la bordure block-start de son `<fieldset>` (rendu
+ * navigateur non contournable proprement en CSS), ce qui coupait le texte
+ * "Couleur" en deux quand on lui ajoutait un border-top. Un div classique
+ * n'a pas ce comportement, le border-top fonctionne normalement.
+ */
+.lpc-customizer__field--color {
+	margin: 1.35rem 0 0;
+	padding-top: 1.35rem;
+	border-top: 1px solid rgba(38, 38, 38, 0.1);
+}
+
+.lpc-customizer__field--color-title {
+	margin: 0 0 0.7rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: #262626;
+}
+
+.lpc-customizer__color-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.85rem;
+}
+
+.lpc-customizer__color-swatch {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.3rem;
+	margin: 0;
+	font-weight: 400;
+	font-size: 0.7rem;
+	color: #797979;
+	cursor: pointer;
+}
+
+.lpc-customizer__color-swatch input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+}
+
+.lpc-customizer__color-dot {
+	display: block;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 50%;
+	border: 1px solid #d1d5db;
+	box-shadow: 0 0 0 2px transparent;
+	transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.lpc-customizer__color-swatch:hover .lpc-customizer__color-dot {
+	transform: scale(1.1);
+}
+
+.lpc-customizer__color-swatch input:focus-visible + .lpc-customizer__color-dot {
+	box-shadow: 0 0 0 3px rgba(162, 136, 95, 0.4);
+}
+
+.lpc-customizer__color-swatch input:checked + .lpc-customizer__color-dot {
+	box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #262626;
+	transform: scale(1.05);
+}
+
+.lpc-customizer__color-swatch input:checked ~ .lpc-customizer__color-label {
+	color: #262626;
+	font-weight: 600;
+}
