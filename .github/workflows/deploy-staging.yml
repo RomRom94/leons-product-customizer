@@ -1,0 +1,50 @@
+name: Deploy staging
+
+# Envoie le plugin sur le STAGING OVH à chaque push sur main.
+# Le déploiement lui-même est fait par scripts/deploy-staging.sh, qui refuse
+# tout dossier autre que www/staging/wp-content/plugins/leons-product-customizer.
+# vendor/ est commité : rien à installer ni à builder ici.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+
+# Un seul déploiement à la fois ; un push plus récent remplace celui en attente.
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        env:
+          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+          SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/ovh_deploy
+          chmod 600 ~/.ssh/ovh_deploy
+          ssh-keyscan -t ed25519 "$SSH_HOST" > ~/.ssh/known_hosts 2>/dev/null
+          # Empreinte du serveur OVH épinglée : échec si elle change.
+          ssh-keygen -lf ~/.ssh/known_hosts | grep -q 'SHA256:9qMjj4nx0ZF5L0s9LGrxNY/riLL8geIh2MuAT/2DKrQ' \
+            || { echo '::error::Empreinte SSH du serveur inattendue, déploiement annulé'; exit 1; }
+
+      - name: Deploy plugin to staging
+        env:
+          DEPLOY_HOST: ${{ secrets.STAGING_SSH_HOST }}
+          DEPLOY_USER: ${{ secrets.STAGING_SSH_USER }}
+          DEPLOY_PATH: www/staging/wp-content/plugins/leons-product-customizer
+        run: |
+          command -v rsync >/dev/null || sudo apt-get install -y rsync
+          bash scripts/deploy-staging.sh --yes
