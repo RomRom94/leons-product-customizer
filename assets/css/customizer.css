@@ -192,6 +192,33 @@
 	cursor: pointer;
 }
 
+/*
+ * Le bouton natif "Choose File" ne peut être restylé que via ce pseudo-élément
+ * (le texte "No file chosen" à côté reste hors de portée du CSS) : on le fait
+ * matcher les boutons pilule noirs du reste du site plutôt que le laisser au
+ * rendu par défaut du navigateur, en décalage avec le reste du formulaire.
+ */
+.lpc-customizer__zone-input[type='file']::file-selector-button,
+.lpc-customizer__zone-input[type='file']::-webkit-file-upload-button {
+	margin-right: 0.75rem;
+	padding: 0.4rem 0.9rem;
+	border: 1px solid #262626;
+	border-radius: 6.25rem;
+	background-color: #262626;
+	color: #ffffff;
+	font-family: inherit;
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.lpc-customizer__zone-input[type='file']:hover::file-selector-button,
+.lpc-customizer__zone-input[type='file']:hover::-webkit-file-upload-button {
+	background-color: #404040;
+	border-color: #404040;
+}
+
 .lpc-customizer__upload-row {
 	display: flex;
 	align-items: center;
