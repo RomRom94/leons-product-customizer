@@ -203,10 +203,21 @@
 			} else {
 				y = h * (typeof pos.y === 'number' ? pos.y : 0.5);
 			}
-			var baseSize = Math.round(w * (style.base_size_ratio || 0.05));
-			var maxWidth = w * (style.max_width_ratio || 0.85);
 			var font = self.getGlobalFont();
 			var color = self.getGlobalColor();
+
+			// Zone avec un cadre (width/height) : le texte est ajusté pour tenir dedans, quelle que soit la police
+			if (typeof pos.width === 'number' && typeof pos.height === 'number') {
+				self.drawTextInBox(ctx, value, x, y, w * pos.width, h * pos.height, self.getRotation(pos), {
+					font: font,
+					color: color,
+					stroke: style.stroke,
+				});
+				return;
+			}
+
+			var baseSize = Math.round(w * (style.base_size_ratio || 0.05));
+			var maxWidth = w * (style.max_width_ratio || 0.85);
 			var fontSize = self.fitFontSize(ctx, value, maxWidth, baseSize, font);
 			self.drawText(ctx, value, x, y, fontSize, {
 				font: font,
@@ -224,16 +235,24 @@
 		var pos = zone.position || {};
 		var boxW = w * (typeof pos.width === 'number' ? pos.width : 0.2);
 		var boxH = h * (typeof pos.height === 'number' ? pos.height : 0.2);
-		var boxX = w * (typeof pos.x === 'number' ? pos.x : 0.5) - boxW / 2;
-		var boxY = h * (typeof pos.y === 'number' ? pos.y : 0.5) - boxH / 2;
+		var cx = w * (typeof pos.x === 'number' ? pos.x : 0.5);
+		var cy = h * (typeof pos.y === 'number' ? pos.y : 0.5);
 
 		var scale = Math.min(boxW / img.naturalWidth, boxH / img.naturalHeight);
 		var drawW = img.naturalWidth * scale;
 		var drawH = img.naturalHeight * scale;
-		var drawX = boxX + (boxW - drawW) / 2;
-		var drawY = boxY + (boxH - drawH) / 2;
 
-		ctx.drawImage(img, drawX, drawY, drawW, drawH);
+		ctx.save();
+		ctx.translate(cx, cy);
+		ctx.rotate(this.getRotation(pos));
+		ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+		ctx.restore();
+	};
+
+	// `position.rotation` : inclinaison du cadre en degrés (sens horaire), pour suivre un emplacement
+	// dessiné en perspective sur la photo (ex. cuisse d'un pantalon)
+	LpcCustomizer.prototype.getRotation = function (pos) {
+		return typeof pos.rotation === 'number' ? (pos.rotation * Math.PI) / 180 : 0;
 	};
 
 	LpcCustomizer.prototype.onFileZoneChange = function (input) {
@@ -288,6 +307,44 @@
 			ctx.font = "normal " + size + "px '" + font + "', sans-serif";
 		}
 		return size;
+	};
+
+	/*
+	 * Texte centré dans un cadre (cx, cy = centre ; boxW × boxH ; incliné de `rotation` radians), avec une marge intérieure : la taille
+	 * part de la hauteur du cadre et diminue jusqu'à ce que le texte réellement dessiné (mesure des
+	 * glyphes, pas de l'em) tienne en largeur et en hauteur. Centrage vertical sur les glyphes eux-mêmes :
+	 * `textBaseline: middle` se cale sur l'em et décentre les capitales selon la police.
+	 */
+	LpcCustomizer.prototype.drawTextInBox = function (ctx, text, cx, cy, boxW, boxH, rotation, style) {
+		var font = style.font || 'Slicker';
+		var maxW = boxW * 0.88;
+		var maxH = boxH * 0.72;
+		var size = Math.max(8, Math.round(boxH * 1.5));
+		var metrics;
+
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'alphabetic';
+		for (; size > 6; size -= 1) {
+			ctx.font = "normal " + size + "px '" + font + "', sans-serif";
+			metrics = ctx.measureText(text);
+			if (
+				metrics.width <= maxW &&
+				metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent <= maxH
+			) {
+				break;
+			}
+		}
+
+		var baselineY = (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
+		ctx.save();
+		ctx.translate(cx, cy);
+		ctx.rotate(rotation);
+		ctx.lineWidth = size * 0.06;
+		ctx.strokeStyle = style.stroke || '#000000';
+		ctx.strokeText(text, 0, baselineY);
+		ctx.fillStyle = style.color || '#FFFFFF';
+		ctx.fillText(text, 0, baselineY);
+		ctx.restore();
 	};
 
 	LpcCustomizer.prototype.drawText = function (ctx, text, x, y, fontSize, style) {

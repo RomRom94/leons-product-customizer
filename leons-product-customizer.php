@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Leon's Product Customizer
  * Description:       Personnalisation produit (flocage) : zones, preview canvas, prix additionnels WooCommerce.
- * Version:           1.0.15
+ * Version:           1.0.16
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Leon Sport
@@ -14,7 +14,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LPC_VERSION', '1.0.15' );
+define( 'LPC_VERSION', '1.0.16' );
 define( 'LPC_PLUGIN_FILE', __FILE__ );
 define( 'LPC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LPC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

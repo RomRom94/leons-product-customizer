@@ -14,10 +14,11 @@
       "price": 7,
       "required": false,
       "position": {
-        "x": 0.388,
+        "x": 0.389,
         "y": 0.28,
-        "width": 0.073,
-        "height": 0.072,
+        "width": 0.06,
+        "height": 0.06,
+        "rotation": 8.4,
         "unit": "ratio"
       }
     },
@@ -31,15 +32,16 @@
       "pattern": "[A-Za-zÀ-ÿ]{1,4}",
       "position": {
         "x": 0.607,
-        "y": 0.321,
+        "y": 0.326,
+        "width": 0.053,
+        "height": 0.021,
+        "rotation": -7.2,
         "unit": "ratio"
       },
       "style": {
         "font": "Slicker",
         "color": "#FFFFFF",
-        "stroke": "#000000",
-        "base_size_ratio": 0.07,
-        "max_width_ratio": 0.14
+        "stroke": "#000000"
       }
     }
   }
