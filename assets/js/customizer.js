@@ -36,6 +36,11 @@
 		this.removeButtons = root.querySelectorAll('[data-lpc-zone-remove]');
 		this.imageCache = {};
 		this.pairs = [];
+		this.body = root.querySelector('[data-lpc-body]');
+		this.unavailableEl = root.querySelector('[data-lpc-unavailable]');
+		this.fieldset = root.querySelector('.lpc-customizer__fields');
+		this.viewImages = (window.lpcCustomizer && window.lpcCustomizer.viewImages) || { colors: {} };
+		this.available = true;
 	}
 
 	LpcCustomizer.prototype.getGlobalFont = function () {
@@ -391,8 +396,9 @@
 			return;
 		}
 		var total = 0;
+		var available = this.available;
 		this.zoneInputs.forEach(function (input) {
-			var value = input.value.trim();
+			var value = available ? input.value.trim() : '';
 			if (!value) {
 				return;
 			}
@@ -418,11 +424,7 @@
 		if (!img) {
 			return;
 		}
-		var placeholder = img.getAttribute('data-placeholder-src') || img.src;
-		if (!data || !data.src) {
-			img.src = placeholder;
-			img.removeAttribute('srcset');
-			img.removeAttribute('sizes');
+		if (!data || !data.src || img.getAttribute('src') === data.src) {
 			return;
 		}
 		var self = this;
@@ -450,58 +452,58 @@
 		}
 	};
 
-	LpcCustomizer.prototype.applyVariation = function (variation) {
-		if (!variation) {
-			return;
-		}
-
-		var faceData =
-			variation.image && variation.image.src ? variation.image : null;
-
-		if (this.faceImage && faceData) {
-			this.updateImage(this.faceImage, faceData);
-		}
-
-		var backData = null;
-		if (variation.lpc_back_image && variation.lpc_back_image.src) {
-			backData = variation.lpc_back_image;
-		} else {
-			var backSrc =
-				variation.lpc_back_image_src || variation.leons_dos_image_src || '';
-			if (backSrc) {
-				backData = { src: backSrc };
-			} else if (faceData) {
-				backData = faceData;
-			}
-		}
-
-		if (this.backImage && backData) {
-			this.updateImage(this.backImage, backData);
-		}
+	// Couleur sélectionnée dans le formulaire de variations (vide tant qu'aucune n'est choisie).
+	LpcCustomizer.prototype.getSelectedColor = function () {
+		var select = document.querySelector(
+			'.variations_form [name="' + this.viewImages.attribute + '"]'
+		);
+		return (select && select.value) || '';
 	};
 
-	LpcCustomizer.prototype.resetPreviewImages = function () {
-		var placeholder =
-			(this.faceImage && this.faceImage.getAttribute('data-placeholder-src')) || '';
-		if (this.faceImage && placeholder) {
-			this.updateImage(this.faceImage, { src: placeholder });
+	// Images de personnalisation de la couleur ; une couleur sans images complètes
+	// désactive le bloc (champs `disabled` = non envoyés avec le formulaire panier).
+	LpcCustomizer.prototype.applyColor = function (color) {
+		var images = this.viewImages.colors[color || this.viewImages.initialColor];
+		this.setAvailable(!!images);
+		if (!images) {
+			return;
 		}
-		if (this.backImage && placeholder) {
-			this.updateImage(this.backImage, { src: placeholder });
+		this.updateImage(this.faceImage, images.front);
+		this.updateImage(this.backImage, images.back);
+	};
+
+	LpcCustomizer.prototype.setAvailable = function (available) {
+		if (this.available === available) {
+			return;
 		}
-		this.render();
+		this.available = available;
+		if (this.body) {
+			this.body.hidden = !available;
+		}
+		if (this.unavailableEl) {
+			this.unavailableEl.hidden = available;
+		}
+		if (this.fieldset) {
+			this.fieldset.disabled = !available;
+		}
+		this.updateAddonsTotal();
 	};
 
 	LpcCustomizer.prototype.bindVariations = function () {
 		var self = this;
+		var attribute = this.viewImages.attribute;
 		this.onFoundVariation = function (event, variation) {
-			self.applyVariation(variation);
+			var attrs = (variation && variation.attributes) || {};
+			self.applyColor(attrs[attribute] || self.getSelectedColor());
 		};
-		this.onResetVariation = function () {
-			self.resetPreviewImages();
+		// reset_data : sélection incomplète ou effacée — on suit la couleur encore choisie.
+		this.onColorChange = function () {
+			self.applyColor(self.getSelectedColor());
 		};
 		$(document.body).on('found_variation', '.variations_form', this.onFoundVariation);
-		$(document.body).on('reset_data', '.variations_form', this.onResetVariation);
+		$(document.body).on('reset_data', '.variations_form', this.onColorChange);
+		$(document.body).on('change', '.variations_form [name="' + attribute + '"]', this.onColorChange);
+		this.applyColor(this.getSelectedColor());
 	};
 
 	LpcCustomizer.prototype.destroy = function () {
@@ -511,7 +513,8 @@
 			}
 		});
 		$(document.body).off('found_variation', '.variations_form', this.onFoundVariation);
-		$(document.body).off('reset_data', '.variations_form', this.onResetVariation);
+		$(document.body).off('reset_data', '.variations_form', this.onColorChange);
+		$(document.body).off('change', '.variations_form [name="' + this.viewImages.attribute + '"]', this.onColorChange);
 	};
 
 	// Le bloc de personnalisation est rendu hors du <form> "Ajouter au panier"

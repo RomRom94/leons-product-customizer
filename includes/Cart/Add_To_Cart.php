@@ -8,6 +8,7 @@
 namespace LPC\Cart;
 
 use LPC\Config\Config_Repository;
+use LPC\Personalization\View_Images;
 use WC_Product;
 
 defined( 'ABSPATH' ) || exit;
@@ -42,6 +43,17 @@ final class Add_To_Cart {
 
 		$raw   = isset( $_POST['lpc_zones'] ) ? wp_unslash( $_POST['lpc_zones'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$files = isset( $_FILES['lpc_files'] ) && is_array( $_FILES['lpc_files'] ) ? $_FILES['lpc_files'] : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		// Couleur sans images de personnalisation : le front désactive le bloc, on refuse
+		// ici toute personnalisation envoyée malgré tout (formulaire modifié, cache…).
+		if ( ! self::is_color_available( $parent_id, $config, (int) $variation_id ) ) {
+			if ( self::has_input( is_array( $raw ) ? $raw : array(), $files ) ) {
+				wc_add_notice( __( 'La personnalisation n’est pas disponible pour cette couleur.', 'leons-product-customizer' ), 'error' );
+				return false;
+			}
+			return $passed;
+		}
+
 		if ( null === Customization::parse_from_request( $config, is_array( $raw ) ? $raw : array(), $files, false ) ) {
 			return false;
 		}
@@ -62,6 +74,10 @@ final class Add_To_Cart {
 			return $cart_item_data;
 		}
 
+		if ( ! self::is_color_available( $parent_id, $config, (int) $variation_id ) ) {
+			return $cart_item_data;
+		}
+
 		$raw    = isset( $_POST['lpc_zones'] ) ? wp_unslash( $_POST['lpc_zones'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$files  = isset( $_FILES['lpc_files'] ) && is_array( $_FILES['lpc_files'] ) ? $_FILES['lpc_files'] : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$parsed = Customization::parse_from_request( $config, is_array( $raw ) ? $raw : array(), $files, true );
@@ -78,6 +94,35 @@ final class Add_To_Cart {
 		$cart_item_data[ Customization::CART_ITEM_KEY ] = $parsed;
 
 		return $cart_item_data;
+	}
+
+	/**
+	 * Au moins une zone remplie (texte non vide ou fichier envoyé) ?
+	 *
+	 * @param array<mixed, mixed>  $raw_zones
+	 * @param array<string, mixed> $raw_files
+	 */
+	private static function has_input( array $raw_zones, array $raw_files ): bool {
+		foreach ( $raw_zones as $value ) {
+			if ( is_string( $value ) && '' !== trim( $value ) ) {
+				return true;
+			}
+		}
+		foreach ( Sponsor_Upload::normalize( $raw_files ) as $file ) {
+			if ( Sponsor_Upload::has_file( $file ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param array<string, mixed> $config
+	 */
+	private static function is_color_available( int $product_id, array $config, int $variation_id ): bool {
+		$product = wc_get_product( $product_id );
+		return $product instanceof WC_Product
+			&& View_Images::is_color_available( $product, $config, View_Images::get_color_for_variation( $variation_id ) );
 	}
 
 	/**

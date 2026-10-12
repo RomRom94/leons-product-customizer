@@ -83,6 +83,15 @@ final class Config_Repository {
 			return null;
 		}
 
+		return self::get_effective_config( $product );
+	}
+
+	/**
+	 * Config du produit (meta ou default), que le customizer soit activé ou non.
+	 *
+	 * @return array<string, mixed>|null
+	 */
+	public static function get_effective_config( WC_Product $product ): ?array {
 		$raw = $product->get_meta( Meta_Keys::CONFIG, true );
 		if ( is_string( $raw ) && trim( $raw ) !== '' ) {
 			$decoded = Config_Validator::decode_json( $raw );

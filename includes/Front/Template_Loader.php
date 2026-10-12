@@ -8,6 +8,7 @@
 namespace LPC\Front;
 
 use LPC\Config\Config_Repository;
+use LPC\Personalization\View_Images;
 use WC_Product;
 
 defined( 'ABSPATH' ) || exit;
@@ -40,20 +41,14 @@ final class Template_Loader {
 			return;
 		}
 
-		$placeholder_src = self::get_placeholder_image_src( $product );
-
-		include LPC_PLUGIN_DIR . 'templates/product-customizer.php';
-	}
-
-	public static function get_placeholder_image_src( WC_Product $product ): string {
-		$image_id = $product->get_image_id();
-		if ( $image_id ) {
-			$src = wp_get_attachment_image_url( $image_id, 'woocommerce_single' );
-			if ( is_string( $src ) && $src !== '' ) {
-				return $src;
-			}
+		// Aucune couleur n'a toutes ses images de personnalisation : pas de bloc.
+		$view_images = View_Images::get_front_data( $product, $config );
+		if ( ! $view_images['colors'] ) {
+			return;
 		}
 
-		return wc_placeholder_img_src( 'woocommerce_single' );
+		$initial_images = $view_images['colors'][ $view_images['initialColor'] ];
+
+		include LPC_PLUGIN_DIR . 'templates/product-customizer.php';
 	}
 }

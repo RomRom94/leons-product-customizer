@@ -102,6 +102,10 @@ final class Product_Data_Tab {
 		);
 		echo '</p>';
 
+		if ( $product instanceof WC_Product ) {
+			View_Images_Grid::render( $product );
+		}
+
 		echo '</div>';
 	}
 

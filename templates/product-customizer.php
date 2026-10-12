@@ -6,7 +6,7 @@
  *
  * @var WC_Product           $product
  * @var array<string, mixed> $config
- * @var string               $placeholder_src
+ * @var array<string, array<string, string>> $initial_images vue => { src, srcset, sizes } de la couleur affichée au chargement
  */
 
 use LPC\Personalization\Style_Options;
@@ -37,7 +37,11 @@ $view_js_targets = array(
 		<?php esc_html_e( 'Personnalisation', 'leons-product-customizer' ); ?>
 	</h3>
 
-	<div class="lpc-customizer__body">
+	<p class="lpc-customizer__unavailable" data-lpc-unavailable role="status" hidden>
+		<?php esc_html_e( 'La personnalisation n’est pas disponible pour cette couleur.', 'leons-product-customizer' ); ?>
+	</p>
+
+	<div class="lpc-customizer__body" data-lpc-body>
 		<div class="lpc-customizer__previews">
 			<?php foreach ( $views as $view_name => $view ) : ?>
 				<?php
@@ -46,6 +50,7 @@ $view_js_targets = array(
 				}
 				$targets    = $view_js_targets[ $view_name ];
 				$view_label = isset( $view['label'] ) ? (string) $view['label'] : $view_name;
+				$image      = $initial_images[ $view_name ] ?? array( 'src' => '', 'srcset' => '', 'sizes' => '' );
 				?>
 				<div class="lpc-customizer__view" data-lpc-view="<?php echo esc_attr( $view_name ); ?>">
 					<p class="lpc-customizer__view-label"><?php echo esc_html( $view_label ); ?></p>
@@ -53,8 +58,11 @@ $view_js_targets = array(
 						<img
 							class="lpc-customizer__image"
 							data-lpc-target="<?php echo esc_attr( $targets['image'] ); ?>"
-							src="<?php echo esc_url( $placeholder_src ); ?>"
-							data-placeholder-src="<?php echo esc_url( $placeholder_src ); ?>"
+							src="<?php echo esc_url( $image['src'] ); ?>"
+							<?php if ( $image['srcset'] ) : ?>
+								srcset="<?php echo esc_attr( $image['srcset'] ); ?>"
+								sizes="<?php echo esc_attr( $image['sizes'] ); ?>"
+							<?php endif; ?>
 							alt=""
 						/>
 						<canvas class="lpc-customizer__canvas" data-lpc-target="<?php echo esc_attr( $targets['canvas'] ); ?>" aria-hidden="true"></canvas>

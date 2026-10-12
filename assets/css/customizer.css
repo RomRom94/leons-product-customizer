@@ -375,3 +375,18 @@
 	color: #262626;
 	font-weight: 600;
 }
+
+/* ── Couleur sans images de personnalisation : bloc remplacé par un message ── */
+.lpc-customizer__unavailable {
+	margin: 0;
+	padding: 1rem 1.25rem;
+	border: 1px solid #e5e5e5;
+	border-radius: 0.75rem;
+	background-color: #fafafa;
+	color: #525252;
+}
+
+.lpc-customizer__unavailable[hidden],
+.lpc-customizer__body[hidden] {
+	display: none;
+}

@@ -8,6 +8,7 @@
 namespace LPC\Front;
 
 use LPC\Config\Config_Repository;
+use LPC\Personalization\View_Images;
 use WC_Product;
 
 defined( 'ABSPATH' ) || exit;
@@ -41,6 +42,11 @@ final class Assets {
 			return;
 		}
 
+		$view_images = View_Images::get_front_data( $product, $config );
+		if ( ! $view_images['colors'] ) {
+			return;
+		}
+
 		wp_enqueue_style(
 			'lpc-customizer',
 			LPC_PLUGIN_URL . 'assets/css/customizer.css',
@@ -62,6 +68,7 @@ final class Assets {
 			array(
 				'productId'      => (int) $product->get_id(),
 				'config'         => $config,
+				'viewImages'     => $view_images,
 				'formattedZero'  => wp_strip_all_tags( wc_price( 0 ) ),
 				'currencySymbol' => get_woocommerce_currency_symbol(),
 				'decimalSep'     => wc_get_price_decimal_separator(),

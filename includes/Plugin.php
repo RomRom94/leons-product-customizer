@@ -31,10 +31,9 @@ final class Plugin {
 
 		if ( is_admin() ) {
 			Admin\Product_Data_Tab::instance()->register();
-			Admin\Variation_Back_Image::register();
+			Admin\View_Images_Grid::register();
 		} else {
 			Front\Assets::register();
-			Front\Variation_Data::register();
 		}
 	}
 }
