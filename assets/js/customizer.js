@@ -41,6 +41,7 @@
 		this.fieldset = root.querySelector('.lpc-customizer__fields');
 		this.viewImages = (window.lpcCustomizer && window.lpcCustomizer.viewImages) || { colors: {} };
 		this.available = true;
+		this.tabs = Array.prototype.slice.call(root.querySelectorAll('[data-lpc-tab]'));
 	}
 
 	LpcCustomizer.prototype.getGlobalFont = function () {
@@ -91,7 +92,16 @@
 				self.render();
 				self.updateAddonsTotal();
 			});
+			// Le client voit la vue sur laquelle il personnalise (nom/numéro → dos).
+			input.addEventListener('focus', function () {
+				var zone = self.zones[input.getAttribute('data-lpc-zone')];
+				if (zone && zone.view) {
+					self.showView(zone.view);
+				}
+			});
 		});
+
+		this.bindTabs();
 
 		if (this.fontSelect) {
 			this.fontSelect.addEventListener('change', function () {
@@ -123,6 +133,60 @@
 			self.render();
 		});
 		this.updateAddonsTotal();
+	};
+
+	// Onglets Face / Dos (motif WAI-ARIA tabs, activation automatique au clavier).
+	LpcCustomizer.prototype.bindTabs = function () {
+		var self = this;
+		this.tabs.forEach(function (tab, index) {
+			tab.addEventListener('click', function () {
+				self.showView(tab.getAttribute('data-lpc-tab'));
+			});
+			tab.addEventListener('keydown', function (event) {
+				var target = null;
+				if (event.key === 'ArrowRight') {
+					target = self.tabs[(index + 1) % self.tabs.length];
+				} else if (event.key === 'ArrowLeft') {
+					target = self.tabs[(index - 1 + self.tabs.length) % self.tabs.length];
+				} else if (event.key === 'Home') {
+					target = self.tabs[0];
+				} else if (event.key === 'End') {
+					target = self.tabs[self.tabs.length - 1];
+				}
+				if (target) {
+					event.preventDefault();
+					self.showView(target.getAttribute('data-lpc-tab'));
+					target.focus();
+				}
+			});
+		});
+	};
+
+	LpcCustomizer.prototype.showView = function (viewName) {
+		var self = this;
+		var found = false;
+		this.tabs.forEach(function (tab) {
+			if (tab.getAttribute('data-lpc-tab') === viewName) {
+				found = true;
+			}
+		});
+		if (!found) {
+			return;
+		}
+		this.tabs.forEach(function (tab) {
+			var active = tab.getAttribute('data-lpc-tab') === viewName;
+			tab.setAttribute('aria-selected', active ? 'true' : 'false');
+			tab.tabIndex = active ? 0 : -1;
+		});
+		this.root.querySelectorAll('[data-lpc-view]').forEach(function (panel) {
+			panel.hidden = panel.getAttribute('data-lpc-view') !== viewName;
+		});
+		// Une vue masquée a une taille nulle : son canvas est dimensionné à l'affichage.
+		this.pairs.forEach(function (pair) {
+			if (pair.view === viewName) {
+				self.syncCanvasSize(pair);
+			}
+		});
 	};
 
 	LpcCustomizer.prototype.loadFonts = function () {

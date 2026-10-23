@@ -29,6 +29,11 @@ $view_js_targets = array(
 	'front' => array( 'image' => 'faceImage', 'canvas' => 'faceCanvas' ),
 	'back'  => array( 'image' => 'backImage', 'canvas' => 'backCanvas' ),
 );
+
+// Vues affichées ; à partir de deux, une seule est visible à la fois, choisie par onglets.
+$preview_views = array_intersect_key( $views, $view_js_targets );
+$has_tabs      = count( $preview_views ) > 1;
+$active_view   = (string) array_key_first( $preview_views );
 ?>
 
 <div class="lpc-customizer" id="lpc-customizer" data-lpc-customizer>
@@ -43,17 +48,45 @@ $view_js_targets = array(
 
 	<div class="lpc-customizer__body" data-lpc-body>
 		<div class="lpc-customizer__previews">
-			<?php foreach ( $views as $view_name => $view ) : ?>
+			<?php if ( $has_tabs ) : ?>
+				<div class="lpc-customizer__tabs" role="tablist" aria-label="<?php esc_attr_e( 'Vue de l’aperçu', 'leons-product-customizer' ); ?>" data-lpc-tabs>
+					<?php foreach ( $preview_views as $view_name => $view ) : ?>
+						<?php $is_active = $view_name === $active_view; ?>
+						<button
+							type="button"
+							class="lpc-customizer__tab"
+							id="lpc-tab-<?php echo esc_attr( $view_name ); ?>"
+							role="tab"
+							aria-controls="lpc-view-<?php echo esc_attr( $view_name ); ?>"
+							aria-selected="<?php echo $is_active ? 'true' : 'false'; ?>"
+							tabindex="<?php echo $is_active ? '0' : '-1'; ?>"
+							data-lpc-tab="<?php echo esc_attr( $view_name ); ?>"
+						>
+							<?php echo esc_html( isset( $view['label'] ) ? (string) $view['label'] : $view_name ); ?>
+						</button>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+
+			<?php foreach ( $preview_views as $view_name => $view ) : ?>
 				<?php
-				if ( ! isset( $view_js_targets[ $view_name ] ) ) {
-					continue;
-				}
 				$targets    = $view_js_targets[ $view_name ];
 				$view_label = isset( $view['label'] ) ? (string) $view['label'] : $view_name;
 				$image      = $initial_images[ $view_name ] ?? array( 'src' => '', 'srcset' => '', 'sizes' => '' );
 				?>
-				<div class="lpc-customizer__view" data-lpc-view="<?php echo esc_attr( $view_name ); ?>">
-					<p class="lpc-customizer__view-label"><?php echo esc_html( $view_label ); ?></p>
+				<div
+					class="lpc-customizer__view"
+					data-lpc-view="<?php echo esc_attr( $view_name ); ?>"
+					<?php if ( $has_tabs ) : ?>
+						id="lpc-view-<?php echo esc_attr( $view_name ); ?>"
+						role="tabpanel"
+						aria-labelledby="lpc-tab-<?php echo esc_attr( $view_name ); ?>"
+						<?php echo $view_name === $active_view ? '' : 'hidden'; ?>
+					<?php endif; ?>
+				>
+					<?php if ( ! $has_tabs ) : ?>
+						<p class="lpc-customizer__view-label"><?php echo esc_html( $view_label ); ?></p>
+					<?php endif; ?>
 					<div class="lpc-customizer__canvas-wrap">
 						<img
 							class="lpc-customizer__image"

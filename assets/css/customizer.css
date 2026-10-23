@@ -53,19 +53,65 @@
 	}
 }
 
-/* ── Aperçus face / dos : cards bordées, comme les cards de la homepage ── */
+/* ── Aperçus face / dos : une card bordée par vue, une seule visible à la fois (onglets) ── */
 .lpc-customizer__previews {
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	gap: 1rem;
+	grid-template-columns: 1fr;
+	gap: 0.75rem;
 	margin-bottom: 1.5rem;
 }
 
 @media (min-width: 768px) {
 	.lpc-customizer__previews {
-		grid-template-columns: 1fr;
 		margin-bottom: 0;
 	}
+}
+
+.lpc-customizer__view[hidden] {
+	display: none;
+}
+
+/* Onglets en contrôle segmenté : pastille noire mate pour la vue active, comme les badges du thème. */
+.lpc-customizer__tabs {
+	display: flex;
+	gap: 0.25rem;
+	padding: 0.25rem;
+	border: 1px solid #e5e7eb;
+	border-radius: 9999px;
+	background-color: #ffffff;
+}
+
+.lpc-customizer .lpc-customizer__tab {
+	flex: 1 1 0;
+	margin: 0;
+	padding: 0.55rem 1rem;
+	border: 0;
+	border-radius: 9999px;
+	background-color: transparent;
+	color: #525252;
+	font-family: inherit;
+	font-size: 0.8rem;
+	font-weight: 600;
+	line-height: 1.2;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.lpc-customizer .lpc-customizer__tab:hover {
+	background-color: #f5f5f5;
+	color: #262626;
+}
+
+.lpc-customizer .lpc-customizer__tab[aria-selected="true"] {
+	background-color: #262626;
+	color: #ffffff;
+}
+
+.lpc-customizer .lpc-customizer__tab:focus-visible {
+	outline: 2px solid #a2885f;
+	outline-offset: 2px;
 }
 
 .lpc-customizer__view {
