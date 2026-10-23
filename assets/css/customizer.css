@@ -14,30 +14,34 @@
 	color: #262626;
 }
 
+/* ── En-tête : titre en capitales comme le titre produit, une ligne d'explication ── */
+.lpc-customizer__head {
+	margin: 0 0 1.75rem;
+	padding-top: 2rem;
+	border-top: 1px solid #e5e7eb;
+}
+
 .lpc-customizer__title {
-	display: flex;
-	align-items: center;
-	gap: 0.65rem;
-	margin: 0 0 1.5rem;
+	margin: 0;
 	font-family: inherit;
 	font-weight: 500;
-	font-size: 1.875rem;
-	line-height: 1.2;
+	font-size: 2.5rem;
+	line-height: 1.125;
 	text-transform: uppercase;
 	color: #262626;
 }
 
-.lpc-customizer__title-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 2.25rem;
-	height: 2.25rem;
-	border-radius: 9999px;
-	background-color: #262626;
-	color: #ffffff;
-	font-size: 0.9rem;
-	flex-shrink: 0;
+.lpc-customizer__intro {
+	margin: 0.5rem 0 0;
+	font-size: 1rem;
+	color: #666666;
+}
+
+@media (max-width: 767px) {
+	.lpc-customizer__title {
+		font-size: 1.875rem;
+		line-height: 1.2;
+	}
 }
 
 .lpc-customizer__body {
@@ -61,8 +65,11 @@
 	margin-bottom: 1.5rem;
 }
 
+/* Desktop : l'aperçu reste visible pendant qu'on remplit le formulaire, plus long que lui */
 @media (min-width: 768px) {
 	.lpc-customizer__previews {
+		position: sticky;
+		top: 2rem;
 		margin-bottom: 0;
 	}
 }
@@ -115,10 +122,10 @@
 }
 
 .lpc-customizer__view {
-	padding: 0.75rem;
-	border: 1px solid #e5e7eb;
-	border-radius: 0.75rem;
-	background-color: #ffffff;
+	padding: 1rem;
+	border: 0;
+	border-radius: 1rem;
+	background-color: #f8f3ec;
 }
 
 .lpc-customizer__view-label {
@@ -141,14 +148,17 @@
 	width: 100%;
 	border-radius: 0.5rem;
 	overflow: hidden;
-	background-color: #e5ecf5;
+	background-color: #f8f3ec;
 }
 
+/* Les ghosts sont sur fond blanc : `multiply` fond ce blanc dans l'ivoire de la carte (le flocage,
+   dessiné sur le canvas au-dessus, garde ses vraies couleurs). */
 .lpc-customizer__image {
 	display: block;
 	width: 100%;
 	height: auto;
 	object-fit: cover;
+	mix-blend-mode: multiply;
 }
 
 .lpc-customizer__canvas {
@@ -160,145 +170,241 @@
 	pointer-events: none;
 }
 
-/* ── Formulaire : card ivoire avec liseré doré, comme les blocs d'accent ── */
-.lpc-customizer__fields {
-	position: relative;
-	margin: 0 0 1rem;
-	padding: 1.75rem 1.5rem 1.5rem;
-	border: 1px solid #e5e7eb;
-	border-top: 3px solid #a2885f;
-	border-radius: 0.75rem;
-	background-color: #f8f3ec;
+/*
+ * ── Formulaire : groupes (Textes, Logos et sponsors, Style du flocage) séparés par des filets fins,
+ * fond blanc — même langage que le bloc d'achat et les accordéons de la fiche produit (thème).
+ */
+/* `.lpc-customizer` en préfixe : Storefront donne aux fieldset un fond gris et un padding */
+.lpc-customizer .lpc-customizer__fields {
+	min-width: 0;
+	min-inline-size: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
 }
 
-.lpc-customizer__fields-legend {
-	padding: 0 0.25rem;
-	font-size: 1rem;
+.lpc-customizer__fields {
+	counter-reset: lpc-step;
+}
+
+.lpc-customizer__group {
+	padding: 1.5rem 0;
+	border-top: 1px solid #e5e7eb;
+	counter-increment: lpc-step;
+}
+
+.lpc-customizer__group:first-of-type {
+	padding-top: 0;
+	border-top: 0;
+}
+
+/* Titre d'étape : numéro dans un rond or (1 Textes, 2 Logos et sponsors, 3 Style du flocage) */
+.lpc-customizer__group-title {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	margin: 0 0 1.1rem;
+	font-size: 0.8rem;
 	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
 	color: #262626;
 }
 
+.lpc-customizer__group-title::before {
+	content: counter(lpc-step);
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: 9999px;
+	background-color: #a2885f;
+	color: #ffffff;
+	font-size: 0.8rem;
+	letter-spacing: 0;
+}
+
 .lpc-customizer__field {
-	margin-bottom: 1.15rem;
+	margin: 0 0 1.1rem;
 }
 
 .lpc-customizer__field:last-child {
 	margin-bottom: 0;
 }
 
-.lpc-customizer__field label {
+/* Libellé à gauche, prix en pastille à droite (préfixe : `.form-row label { display: block }` de Storefront) */
+.lpc-customizer .lpc-customizer__field-head {
 	display: flex;
 	align-items: center;
-	flex-wrap: wrap;
-	margin-bottom: 0.4rem;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin: 0 0 0.5rem;
 	font-size: 0.875rem;
-	font-weight: 500;
+	font-weight: 600;
 	color: #262626;
 }
 
-.lpc-customizer__zone-price {
-	display: inline-flex;
-	align-items: center;
-	margin-left: 0.4rem;
-	padding: 0.1rem 0.55rem;
+.lpc-customizer__field-label abbr {
+	text-decoration: none;
+	color: #e93030;
+}
+
+.lpc-customizer .lpc-customizer__zone-price {
+	flex-shrink: 0;
+	padding: 0.15rem 0.6rem;
 	border-radius: 9999px;
-	background-color: rgba(162, 136, 95, 0.14);
-	color: #a2885f;
-	font-size: 0.7rem;
+	/* or teinté ; texte or foncé (≈ 5,5:1 sur ce fond) */
+	background-color: rgba(162, 136, 95, 0.16);
+	color: #6e5a3a;
+	font-size: 0.75rem;
 	font-weight: 600;
+}
+
+.lpc-customizer .lpc-customizer__zone-price .woocommerce-Price-amount {
+	color: inherit;
 }
 
 .lpc-customizer__field .input-text,
-.lpc-customizer__zone-input[type='text'],
-.lpc-customizer__zone-input[type='file'],
-.lpc-customizer__field--font .lpc-customizer__font-select {
+.lpc-customizer__zone-input[type='text'] {
 	display: block;
 	width: 100%;
-	max-width: 20rem;
+	min-width: 0;
+	height: 3rem;
+	padding: 0 1rem;
 	border: 1px solid #d1d5db;
-	border-radius: 0.5rem;
-	padding: 0.55rem 1rem;
-	font-family: inherit;
-	font-size: 0.875rem;
-	color: #262626;
+	border-radius: 0.75rem;
 	background-color: #ffffff;
+	box-shadow: none;
+	font-family: inherit;
+	font-size: 1rem;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: #262626;
 	transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.lpc-customizer__field .input-text:focus,
-.lpc-customizer__zone-input:focus,
-.lpc-customizer__font-select:focus {
+.lpc-customizer__field .input-text:hover {
+	border-color: #262626;
+}
+
+.lpc-customizer__field .input-text:focus {
 	outline: none;
-	border-color: #a2885f;
-	box-shadow: 0 0 0 3px rgba(162, 136, 95, 0.16);
+	border-color: #262626;
+	box-shadow: 0 0 0 3px rgba(162, 136, 95, 0.25);
 }
 
-.lpc-customizer__zone-input[type='file'] {
-	padding: 0.4rem 0.75rem;
-	cursor: pointer;
+.lpc-customizer .lpc-customizer__field-hint {
+	display: block;
+	margin-top: 0.35rem;
+	font-size: 0.75rem;
+	color: #666666;
 }
 
-/*
- * Le bouton natif "Choose File" ne peut être restylé que via ce pseudo-élément
- * (le texte "No file chosen" à côté reste hors de portée du CSS) : on le fait
- * matcher les boutons pilule noirs du reste du site plutôt que le laisser au
- * rendu par défaut du navigateur, en décalage avec le reste du formulaire.
- */
-.lpc-customizer__zone-input[type='file']::file-selector-button,
-.lpc-customizer__zone-input[type='file']::-webkit-file-upload-button {
-	margin-right: 0.75rem;
-	padding: 0.4rem 0.9rem;
-	border: 1px solid #262626;
-	border-radius: 6.25rem;
-	background-color: #262626;
-	color: #ffffff;
-	font-family: inherit;
-	font-size: 0.8rem;
-	font-weight: 600;
-	cursor: pointer;
-	transition: background-color 0.15s ease, border-color 0.15s ease;
-}
-
-.lpc-customizer__zone-input[type='file']:hover::file-selector-button,
-.lpc-customizer__zone-input[type='file']:hover::-webkit-file-upload-button {
-	background-color: #404040;
-	border-color: #404040;
-}
-
+/* ── Envoi de fichier : zone en pointillés cliquable, le champ natif est masqué ── */
 .lpc-customizer__upload-row {
 	display: flex;
-	align-items: center;
+	align-items: stretch;
 	gap: 0.5rem;
-	max-width: 20rem;
 }
 
-.lpc-customizer__upload-row .lpc-customizer__zone-input[type='file'] {
+.lpc-customizer .lpc-customizer__upload {
+	position: relative;
+	display: flex;
 	flex: 1;
-	width: auto;
-	max-width: none;
+	align-items: center;
+	gap: 0.85rem;
 	min-width: 0;
+	margin: 0;
+	padding: 0.75rem 1rem;
+	border: 1px dashed #d1d5db;
+	border-radius: 0.75rem;
+	background-color: #ffffff;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.lpc-customizer__upload:hover {
+	border-color: #a2885f;
+	background-color: #f8f3ec;
+}
+
+.lpc-customizer__upload:focus-within {
+	border-style: solid;
+	border-color: #262626;
+	box-shadow: 0 0 0 3px rgba(162, 136, 95, 0.25);
+}
+
+.lpc-customizer__upload.is-filled {
+	border-style: solid;
+	border-color: #a2885f;
+	background-color: #f8f3ec;
+}
+
+.lpc-customizer__upload-input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+	overflow: hidden;
+}
+
+.lpc-customizer__upload-icon {
+	display: inline-flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border-radius: 9999px;
+	background-color: #a2885f;
+	color: #ffffff;
+	font-size: 0.8rem;
+}
+
+.lpc-customizer__upload-text {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.lpc-customizer__upload-name {
+	overflow: hidden;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #262626;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.lpc-customizer__upload-hint {
+	font-size: 0.75rem;
+	color: #666666;
 }
 
 .lpc-customizer__zone-remove {
 	display: inline-flex;
+	flex-shrink: 0;
 	align-items: center;
 	justify-content: center;
-	flex-shrink: 0;
-	width: 2.35rem;
-	height: 2.35rem;
+	width: 3rem;
+	padding: 0;
 	border: 1px solid #d1d5db;
-	border-radius: 0.5rem;
+	border-radius: 0.75rem;
 	background-color: #ffffff;
-	color: #797979;
-	font-size: 0.85rem;
+	color: #262626;
+	font-size: 0.9rem;
 	cursor: pointer;
-	transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.lpc-customizer__zone-remove:hover {
-	border-color: #a2885f;
-	color: #a2885f;
-	background-color: rgba(162, 136, 95, 0.08);
+.lpc-customizer__zone-remove:hover,
+.lpc-customizer__zone-remove:focus-visible {
+	border-color: #262626;
+	background-color: #f6f6f6;
 }
 
 .lpc-customizer__zone-remove[hidden] {
@@ -307,119 +413,145 @@
 
 /*
  * `--fa-width` (utilisée par `.svg-inline--fa { width: var(--fa-width, 1.25em) }`
- * dans la feuille de base FontAwesome) résout à 0 dans ce contexte précis (bouton
- * flex) — cause non identifiée avec certitude, contournée en fixant la largeur en
- * dur plutôt qu'en dépendant de la variable/fallback.
+ * dans la feuille de base FontAwesome) résout à 0 dans un bouton flex : largeur fixée en dur.
  */
-.lpc-customizer__zone-remove .svg-inline--fa {
+.lpc-customizer__zone-remove .svg-inline--fa,
+.lpc-customizer__upload-icon .svg-inline--fa {
 	width: 1em;
 	flex-shrink: 0;
 }
 
-.lpc-customizer__field-hint {
-	display: block;
-	margin-top: 0.35rem;
-	font-size: 0.75rem;
-	color: #797979;
+/* ── Police : une carte par police, « 10 » écrit dans la police ── */
+.lpc-customizer__font-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+	gap: 0.5rem;
 }
 
-/* ── Total : bandeau plein, comme les blocs bg-primary de la homepage ──── */
-.lpc-customizer__total {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 0.75rem;
-	margin: 1.25rem 0 0;
-	padding: 0.9rem 1.25rem;
-	border-radius: 0.75rem;
-	background-color: #262626;
-	color: #ffffff;
-	font-size: 0.8rem;
-}
-
-.lpc-customizer__total strong {
-	color: #ffffff;
-	font-size: 1.05rem;
-	font-weight: 700;
-}
-
-.lpc-customizer__field--font {
-	margin-top: 1.35rem;
-	padding-top: 1.35rem;
-	border-top: 1px solid rgba(38, 38, 38, 0.1);
-}
-
-/*
- * `<div role="group">` à la place d'un `<fieldset>/<legend>` : un `<legend>`
- * chevauche nativement la bordure block-start de son `<fieldset>` (rendu
- * navigateur non contournable proprement en CSS), ce qui coupait le texte
- * "Couleur" en deux quand on lui ajoutait un border-top. Un div classique
- * n'a pas ce comportement, le border-top fonctionne normalement.
- */
-.lpc-customizer__field--color {
-	margin: 1.35rem 0 0;
-	padding-top: 1.35rem;
-	border-top: 1px solid rgba(38, 38, 38, 0.1);
-}
-
-.lpc-customizer__field--color-title {
-	margin: 0 0 0.7rem;
-	font-size: 0.875rem;
-	font-weight: 500;
-	color: #262626;
-}
-
-.lpc-customizer__color-list {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.85rem;
-}
-
-.lpc-customizer__color-swatch {
+.lpc-customizer__font-option {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 0.3rem;
+	gap: 0.15rem;
 	margin: 0;
-	font-weight: 400;
+	padding: 0.75rem 0.5rem 0.6rem;
+	border: 1px solid #d1d5db;
+	border-radius: 0.75rem;
+	background-color: #ffffff;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.lpc-customizer__font-option:hover {
+	border-color: #262626;
+}
+
+.lpc-customizer__font-option input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+}
+
+.lpc-customizer__font-sample {
+	font-size: 2rem;
+	line-height: 1;
+	color: #262626;
+}
+
+.lpc-customizer__font-label {
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: #666666;
+}
+
+.lpc-customizer__font-option:has(input:checked) {
+	border-color: #a2885f;
+	background-color: #f8f3ec;
+	box-shadow: inset 0 0 0 1px #a2885f;
+}
+
+.lpc-customizer__font-option:has(input:checked) .lpc-customizer__font-label {
+	color: #262626;
+}
+
+.lpc-customizer__font-option:has(input:focus-visible) {
+	outline: 2px solid #a2885f;
+	outline-offset: 2px;
+}
+
+/* ── Couleur du flocage : pastilles rondes, anneau comme les couleurs du produit ── */
+.lpc-customizer__color-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem 0.6rem;
+}
+
+.lpc-customizer__color-swatch {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.35rem;
+	width: 2.75rem;
+	margin: 0;
 	font-size: 0.7rem;
-	color: #797979;
+	font-weight: 500;
+	color: #666666;
 	cursor: pointer;
 }
 
 .lpc-customizer__color-swatch input {
 	position: absolute;
-	opacity: 0;
 	width: 1px;
 	height: 1px;
+	opacity: 0;
 }
 
 .lpc-customizer__color-dot {
 	display: block;
 	width: 2rem;
 	height: 2rem;
-	border-radius: 50%;
 	border: 1px solid #d1d5db;
+	border-radius: 50%;
 	box-shadow: 0 0 0 2px transparent;
-	transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.lpc-customizer__color-swatch:hover .lpc-customizer__color-dot {
-	transform: scale(1.1);
+	transition: box-shadow 0.15s ease;
 }
 
 .lpc-customizer__color-swatch input:focus-visible + .lpc-customizer__color-dot {
-	box-shadow: 0 0 0 3px rgba(162, 136, 95, 0.4);
+	box-shadow: 0 0 0 3px rgba(162, 136, 95, 0.45);
 }
 
 .lpc-customizer__color-swatch input:checked + .lpc-customizer__color-dot {
 	box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #262626;
-	transform: scale(1.05);
 }
 
 .lpc-customizer__color-swatch input:checked ~ .lpc-customizer__color-label {
 	color: #262626;
 	font-weight: 600;
+}
+
+/* ── Supplément : carte noir mat, montant en or (texte large : contraste ≥ 3:1) ── */
+.lpc-customizer__total {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	margin: 0.5rem 0 0;
+	padding: 1.1rem 1.25rem;
+	border-radius: 1rem;
+	background-color: #262626;
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: #ffffff;
+}
+
+.lpc-customizer__total strong,
+.lpc-customizer__total strong .woocommerce-Price-amount {
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #c7b08a;
 }
 
 /* ── Couleur sans images de personnalisation : bloc remplacé par un message ── */

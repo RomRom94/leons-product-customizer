@@ -30,7 +30,8 @@
 		this.backCanvas = root.querySelector('[data-lpc-target="backCanvas"]');
 		this.addonsTotalEl = root.querySelector('[data-lpc-addons-total]');
 		this.zoneInputs = root.querySelectorAll('[data-lpc-zone]');
-		this.fontSelect = root.querySelector('[data-lpc-global="font"]');
+		// Police : boutons radio (une carte par police, voir templates/product-customizer.php).
+		this.fontInputs = root.querySelectorAll('[data-lpc-global="font"]');
 		this.colorInputs = root.querySelectorAll('[data-lpc-global="color"]');
 		this.fileInputs = root.querySelectorAll('input[type="file"][data-lpc-zone]');
 		this.removeButtons = root.querySelectorAll('[data-lpc-zone-remove]');
@@ -45,7 +46,13 @@
 	}
 
 	LpcCustomizer.prototype.getGlobalFont = function () {
-		return (this.fontSelect && this.fontSelect.value) || 'Slicker';
+		var checked = null;
+		this.fontInputs.forEach(function (input) {
+			if (input.checked) {
+				checked = input;
+			}
+		});
+		return (checked && checked.value) || 'Slicker';
 	};
 
 	LpcCustomizer.prototype.getGlobalColor = function () {
@@ -103,11 +110,11 @@
 
 		this.bindTabs();
 
-		if (this.fontSelect) {
-			this.fontSelect.addEventListener('change', function () {
+		this.fontInputs.forEach(function (input) {
+			input.addEventListener('change', function () {
 				self.render();
 			});
-		}
+		});
 
 		this.colorInputs.forEach(function (input) {
 			input.addEventListener('change', function () {
@@ -198,13 +205,11 @@
 			}
 		}, this);
 
-		if (this.fontSelect) {
-			Array.prototype.forEach.call(this.fontSelect.options, function (option) {
-				if (option.value) {
-					fonts.add(option.value);
-				}
-			});
-		}
+		this.fontInputs.forEach(function (input) {
+			if (input.value) {
+				fonts.add(input.value);
+			}
+		});
 
 		var promises = [];
 		fonts.forEach(function (font) {
@@ -349,13 +354,22 @@
 		reader.readAsDataURL(file);
 	};
 
+	// Bouton « retirer », nom du fichier dans la zone d'envoi et état rempli, d'après le champ fichier.
 	LpcCustomizer.prototype.updateRemoveButtonVisibility = function (input) {
 		var zoneId = input.getAttribute('data-lpc-zone');
+		var file = input.files && input.files[0];
 		var button = this.root.querySelector('[data-lpc-zone-remove="' + zoneId + '"]');
-		if (!button) {
-			return;
+		if (button) {
+			button.hidden = !file;
 		}
-		button.hidden = !(input.files && input.files.length);
+		var name = this.root.querySelector('[data-lpc-file-name="' + zoneId + '"]');
+		if (name) {
+			name.textContent = file ? file.name : name.getAttribute('data-empty');
+		}
+		var upload = input.closest('.lpc-customizer__upload');
+		if (upload) {
+			upload.classList.toggle('is-filled', !!file);
+		}
 	};
 
 	LpcCustomizer.prototype.clearFileZone = function (zoneId) {
