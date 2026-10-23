@@ -57,7 +57,7 @@ final class View_Images_Grid {
 		$example  = self::get_filename_prefix( $product ) . (string) array_key_first( $colors ) . '-' . sanitize_title( (string) reset( $views ) ) . '.webp';
 
 		echo '<p class="description">';
-		echo esc_html__( 'Images sur lesquelles le flocage est dessiné, distinctes des photos du produit. Même cadrage pour toutes les couleurs, 1200×1600. Une couleur à laquelle il manque une image n’est pas personnalisable.', 'leons-product-customizer' );
+		echo esc_html__( 'Images sur lesquelles le flocage est dessiné, distinctes des photos du produit. Même cadrage pour toutes les couleurs, 1200×1200. Une couleur à laquelle il manque une image n’est pas personnalisable.', 'leons-product-customizer' );
 		echo '</p>';
 
 		echo '<table class="widefat striped lpc-view-images__table"><thead><tr>';
