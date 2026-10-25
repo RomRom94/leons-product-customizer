@@ -10,10 +10,12 @@
  */
 
 use LPC\Personalization\Style_Options;
+use LPC\Personalization\View_Images;
 
 defined( 'ABSPATH' ) || exit;
 
-$views = isset( $config['views'] ) && is_array( $config['views'] ) ? $config['views'] : array();
+// Seulement les vues qui portent une zone (View_Images::get_views) : pas d'onglet « Dos » vide.
+$views = isset( $config['views'] ) && is_array( $config['views'] ) ? array_intersect_key( $config['views'], View_Images::get_views( $config ) ) : array();
 $zones = isset( $config['zones'] ) && is_array( $config['zones'] ) ? $config['zones'] : array();
 
 $has_text_zone = false;

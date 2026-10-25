@@ -62,8 +62,20 @@ final class View_Images {
 	 * @return array<string, string> clé de vue => libellé
 	 */
 	public static function get_views( array $config ): array {
+		// Vues qui portent au moins une zone : une vue « dos » sans zone (sous-maillot, short, veste de
+		// training…) n'exige pas d'image et n'est pas affichée. Sans aucune zone déclarée, toutes les vues.
+		$used = array();
+		foreach ( (array) ( $config['zones'] ?? array() ) as $zone ) {
+			if ( is_array( $zone ) && isset( $zone['view'] ) ) {
+				$used[ (string) $zone['view'] ] = true;
+			}
+		}
+
 		$views = array();
 		foreach ( (array) ( $config['views'] ?? array() ) as $key => $view ) {
+			if ( $used && ! isset( $used[ (string) $key ] ) ) {
+				continue;
+			}
 			$views[ (string) $key ] = is_array( $view ) && isset( $view['label'] ) ? (string) $view['label'] : (string) $key;
 		}
 		return $views;
