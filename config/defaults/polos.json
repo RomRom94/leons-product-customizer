@@ -1,46 +1,209 @@
 {
-  "enabled": true,
-  "views": {
-    "front": {
-      "label": "Face",
-      "background_source": "variation_image"
-    }
-  },
-  "zones": {
-    "logo": {
-      "label": "Logo",
-      "type": "image",
-      "view": "front",
-      "price": 7,
-      "required": false,
-      "position": {
-        "x": 0.61,
-        "y": 0.32,
-        "width": 0.107,
-        "height": 0.111,
-        "unit": "ratio"
-      }
+    "enabled": true,
+    "views": {
+        "front": {
+            "label": "Face",
+            "background_source": "variation_image"
+        }
     },
-    "initiales": {
-      "label": "Initiales",
-      "type": "text",
-      "view": "front",
-      "price": 2.5,
-      "required": false,
-      "max_length": 4,
-      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
-      "position": {
-        "x": 0.378,
-        "y": 0.403,
-        "unit": "ratio"
-      },
-      "style": {
-        "font": "Slicker",
-        "color": "#FFFFFF",
-        "stroke": "#000000",
-        "base_size_ratio": 0.035,
-        "max_width_ratio": 0.16
-      }
+    "zones": {
+        "coeur": {
+            "label": "Logo cœur",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.6107,
+                "y": 0.3203,
+                "width": 0.1093,
+                "height": 0.1119,
+                "unit": "ratio"
+            }
+        },
+        "sponsor_avant": {
+            "label": "Sponsor avant",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "exclusive_with": "sponsor_avant_texte",
+            "position": {
+                "x": 0.5002,
+                "y": 0.5237,
+                "width": 0.3254,
+                "height": 0.1962,
+                "unit": "ratio"
+            }
+        },
+        "sponsor_avant_texte": {
+            "label": "Sponsor avant (texte)",
+            "type": "text",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "max_length": 20,
+            "position": {
+                "x": 0.5002,
+                "y": 0.5237,
+                "width": 0.3254,
+                "height": 0.1962,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "sponsor_manche_g": {
+            "label": "Sponsor manche gauche",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "exclusive_with": "sponsor_manche_g_texte",
+            "position": {
+                "x": 0.2354,
+                "y": 0.3559,
+                "width": 0.1068,
+                "height": 0.1444,
+                "unit": "ratio"
+            }
+        },
+        "sponsor_manche_g_texte": {
+            "label": "Sponsor manche gauche (texte)",
+            "type": "text",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "max_length": 20,
+            "position": {
+                "x": 0.2354,
+                "y": 0.3559,
+                "width": 0.1068,
+                "height": 0.1444,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "sponsor_manche_d": {
+            "label": "Sponsor manche droite",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "exclusive_with": "sponsor_manche_d_texte",
+            "position": {
+                "x": 0.7706,
+                "y": 0.3534,
+                "width": 0.1018,
+                "height": 0.1444,
+                "unit": "ratio"
+            }
+        },
+        "sponsor_manche_d_texte": {
+            "label": "Sponsor manche droite (texte)",
+            "type": "text",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "max_length": 20,
+            "position": {
+                "x": 0.7706,
+                "y": 0.3534,
+                "width": 0.1018,
+                "height": 0.1444,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "initiales": {
+            "label": "Initiales",
+            "type": "text",
+            "view": "front",
+            "price": 2.5,
+            "required": false,
+            "max_length": 4,
+            "pattern": "[A-Za-zÀ-ÿ0-9]{1,4}",
+            "position": {
+                "x": 0.3784,
+                "y": 0.3981,
+                "width": 0.0881,
+                "height": 0.0487,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "name": {
+            "label": "Nom dos",
+            "type": "text",
+            "view": "none",
+            "price": 5,
+            "required": false,
+            "max_length": 12,
+            "pattern": "[A-Za-zÀ-ÿ \\-]{1,12}",
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "number": {
+            "label": "Numéro",
+            "type": "text",
+            "view": "none",
+            "price": 5,
+            "required": false,
+            "max_length": 2,
+            "pattern": "[0-9]{1,2}",
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "sponsor_dos": {
+            "label": "Sponsor bas du dos",
+            "type": "image",
+            "view": "none",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "exclusive_with": "sponsor_dos_texte"
+        },
+        "sponsor_dos_texte": {
+            "label": "Sponsor bas du dos (texte)",
+            "type": "text",
+            "view": "none",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "max_length": 20,
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        }
     }
-  }
 }

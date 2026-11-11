@@ -1,48 +1,47 @@
 {
-  "enabled": true,
-  "views": {
-    "front": {
-      "label": "Face",
-      "background_source": "variation_image"
-    }
-  },
-  "zones": {
-    "logo": {
-      "label": "Logo",
-      "type": "image",
-      "view": "front",
-      "price": 7,
-      "required": false,
-      "position": {
-        "x": 0.348,
-        "y": 0.33,
-        "width": 0.073,
-        "height": 0.064,
-        "rotation": 5.8,
-        "unit": "ratio"
-      }
+    "enabled": true,
+    "views": {
+        "front": {
+            "label": "Face",
+            "background_source": "variation_image"
+        }
     },
-    "initiales": {
-      "label": "Initiales",
-      "type": "text",
-      "view": "front",
-      "price": 2.5,
-      "required": false,
-      "max_length": 4,
-      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
-      "position": {
-        "x": 0.627,
-        "y": 0.3825,
-        "width": 0.086,
-        "height": 0.024,
-        "rotation": -2.8,
-        "unit": "ratio"
-      },
-      "style": {
-        "font": "Slicker",
-        "color": "#FFFFFF",
-        "stroke": "#000000"
-      }
+    "zones": {
+        "logo": {
+            "label": "Logo / sponsor cuisse",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.3885,
+                "y": 0.3295,
+                "width": 0.0661,
+                "height": 0.0775,
+                "unit": "ratio"
+            }
+        },
+        "initiales": {
+            "label": "Initiales",
+            "type": "text",
+            "view": "front",
+            "price": 2.5,
+            "required": false,
+            "max_length": 4,
+            "pattern": "[A-Za-zÀ-ÿ0-9]{1,4}",
+            "position": {
+                "x": 0.5933,
+                "y": 0.3826,
+                "width": 0.0673,
+                "height": 0.031,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        }
     }
-  }
 }

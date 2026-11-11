@@ -1,46 +1,134 @@
 {
-  "enabled": true,
-  "views": {
-    "front": {
-      "label": "Face",
-      "background_source": "variation_image"
-    }
-  },
-  "zones": {
-    "coeur": {
-      "label": "Logo cœur",
-      "type": "image",
-      "view": "front",
-      "price": 7,
-      "required": false,
-      "position": {
-        "x": 0.608,
-        "y": 0.31,
-        "width": 0.089,
-        "height": 0.093,
-        "unit": "ratio"
-      }
+    "enabled": true,
+    "views": {
+        "front": {
+            "label": "Face",
+            "background_source": "variation_image"
+        },
+        "back": {
+            "label": "Dos",
+            "background_source": "meta",
+            "background_meta_key": "_lpc_back_image_id"
+        }
     },
-    "initiales": {
-      "label": "Initiales",
-      "type": "text",
-      "view": "front",
-      "price": 2.5,
-      "required": false,
-      "max_length": 4,
-      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
-      "position": {
-        "x": 0.406,
-        "y": 0.376,
-        "unit": "ratio"
-      },
-      "style": {
-        "font": "Slicker",
-        "color": "#FFFFFF",
-        "stroke": "#000000",
-        "base_size_ratio": 0.035,
-        "max_width_ratio": 0.14
-      }
+    "zones": {
+        "coeur": {
+            "label": "Logo cœur",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.6083,
+                "y": 0.3107,
+                "width": 0.0907,
+                "height": 0.0958,
+                "unit": "ratio"
+            }
+        },
+        "sponsor_avant": {
+            "label": "Sponsor avant",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.5095,
+                "y": 0.488,
+                "width": 0.3077,
+                "height": 0.1544,
+                "unit": "ratio"
+            }
+        },
+        "sponsor_manche_g": {
+            "label": "Sponsor manche gauche",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.2495,
+                "y": 0.3724,
+                "width": 0.0895,
+                "height": 0.1985,
+                "unit": "ratio"
+            }
+        },
+        "sponsor_manche_d": {
+            "label": "Sponsor manche droite",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.7564,
+                "y": 0.3687,
+                "width": 0.0804,
+                "height": 0.1991,
+                "unit": "ratio"
+            }
+        },
+        "initiales": {
+            "label": "Initiales",
+            "type": "text",
+            "view": "front",
+            "price": 2.5,
+            "required": false,
+            "max_length": 4,
+            "pattern": "[A-Za-zÀ-ÿ0-9]{1,4}",
+            "position": {
+                "x": 0.3939,
+                "y": 0.3764,
+                "width": 0.0821,
+                "height": 0.0425,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "nom_dos": {
+            "label": "Nom dos",
+            "type": "text",
+            "view": "back",
+            "price": 5,
+            "required": false,
+            "target": "neutral",
+            "max_length": 12,
+            "pattern": "[A-Za-zÀ-ÿ \\-]{1,12}",
+            "position": {
+                "x": 0.503,
+                "y": 0.2944,
+                "width": 0.299,
+                "height": 0.0728,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "sponsor_dos": {
+            "label": "Sponsor dos",
+            "type": "image",
+            "view": "back",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.5025,
+                "y": 0.465,
+                "width": 0.28,
+                "height": 0.2167,
+                "unit": "ratio"
+            }
+        }
     }
-  }
 }
