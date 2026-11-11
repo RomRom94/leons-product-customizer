@@ -1,32 +1,41 @@
 {
-  "enabled": true,
-  "views": {
-    "front": {
-      "label": "Poignet",
-      "background_source": "variation_image"
+    "enabled": true,
+    "views": {
+        "front": {
+            "label": "Face",
+            "background_source": "variation_image"
+        }
+    },
+    "zones": {
+        "initiales": {
+            "label": "Initiales",
+            "type": "text",
+            "view": "front",
+            "price": 2.5,
+            "required": false,
+            "extra_positions": [
+                {
+                    "x": 0.5883,
+                    "y": 0.7127,
+                    "width": 0.0874,
+                    "height": 0.0693,
+                    "unit": "ratio"
+                }
+            ],
+            "max_length": 4,
+            "pattern": "[A-Za-zÀ-ÿ0-9]{1,4}",
+            "position": {
+                "x": 0.3849,
+                "y": 0.6841,
+                "width": 0.0887,
+                "height": 0.0693,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        }
     }
-  },
-  "zones": {
-    "initiales": {
-      "label": "Initiales",
-      "type": "text",
-      "view": "front",
-      "price": 2.5,
-      "required": false,
-      "max_length": 4,
-      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
-      "position": {
-        "x": 0.385,
-        "y": 0.684,
-        "unit": "ratio"
-      },
-      "style": {
-        "font": "Slicker",
-        "color": "#FFFFFF",
-        "stroke": "#000000",
-        "base_size_ratio": 0.04,
-        "max_width_ratio": 0.08
-      }
-    }
-  }
 }

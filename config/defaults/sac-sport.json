@@ -1,41 +1,27 @@
 {
-  "enabled": true,
-  "views": {
-    "front": {
-      "label": "Face",
-      "background_source": "variation_image"
-    }
-  },
-  "zones": {
-    "logo": {
-      "label": "Logo",
-      "type": "image",
-      "view": "front",
-      "price": 7,
-      "required": false,
-      "position": {
-        "x": 0.474,
-        "y": 0.66,
-        "width": 0.2,
-        "height": 0.21,
-        "unit": "ratio"
-      }
+    "enabled": true,
+    "views": {
+        "back": {
+            "label": "Dos",
+            "background_source": "meta",
+            "background_meta_key": "_lpc_back_image_id"
+        }
     },
-    "initiales": {
-      "label": "Initiales",
-      "type": "text",
-      "view": "front",
-      "price": 2.5,
-      "required": false,
-      "max_length": 4,
-      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
-      "style": {
-        "font": "Slicker",
-        "color": "#FFFFFF",
-        "stroke": "#000000",
-        "base_size_ratio": 0.05,
-        "max_width_ratio": 0.2
-      }
+    "zones": {
+        "logo": {
+            "label": "Logo / sponsor",
+            "type": "image",
+            "view": "back",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.4842,
+                "y": 0.5709,
+                "width": 0.1786,
+                "height": 0.1563,
+                "unit": "ratio"
+            }
+        }
     }
-  }
 }

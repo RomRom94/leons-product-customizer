@@ -282,10 +282,13 @@
 
 			// Zone avec un cadre (width/height) : le texte est ajusté pour tenir dedans, quelle que soit la police
 			if (typeof pos.width === 'number' && typeof pos.height === 'number') {
-				self.drawTextInBox(ctx, value, x, y, w * pos.width, h * pos.height, self.getRotation(pos), {
-					font: font,
-					color: color,
-					stroke: style.stroke,
+				// `extra_positions` : même texte répété dans d'autres cadres (ex. initiales sur les deux gants)
+				[pos].concat(Array.isArray(zone.extra_positions) ? zone.extra_positions : []).forEach(function (p, i) {
+					self.drawTextInBox(ctx, value, i ? w * p.x : x, i ? h * p.y : y, w * p.width, h * p.height, self.getRotation(p), {
+						font: font,
+						color: color,
+						stroke: style.stroke,
+					});
 				});
 				return;
 			}

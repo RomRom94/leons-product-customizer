@@ -1,46 +1,47 @@
 {
-  "enabled": true,
-  "views": {
-    "front": {
-      "label": "Face",
-      "background_source": "variation_image"
-    }
-  },
-  "zones": {
-    "logo": {
-      "label": "Logo",
-      "type": "image",
-      "view": "front",
-      "price": 7,
-      "required": false,
-      "position": {
-        "x": 0.501,
-        "y": 0.761,
-        "width": 0.336,
-        "height": 0.214,
-        "unit": "ratio"
-      }
+    "enabled": true,
+    "views": {
+        "front": {
+            "label": "Face",
+            "background_source": "variation_image"
+        }
     },
-    "initiales": {
-      "label": "Initiales",
-      "type": "text",
-      "view": "front",
-      "price": 2.5,
-      "required": false,
-      "max_length": 4,
-      "pattern": "[A-Za-zÀ-ÿ]{1,4}",
-      "position": {
-        "x": 0.492,
-        "y": 0.473,
-        "unit": "ratio"
-      },
-      "style": {
-        "font": "Slicker",
-        "color": "#FFFFFF",
-        "stroke": "#000000",
-        "base_size_ratio": 0.05,
-        "max_width_ratio": 0.24
-      }
+    "zones": {
+        "initiales": {
+            "label": "Initiales",
+            "type": "text",
+            "view": "front",
+            "price": 2.5,
+            "required": false,
+            "max_length": 4,
+            "pattern": "[A-Za-zÀ-ÿ0-9]{1,4}",
+            "position": {
+                "x": 0.494,
+                "y": 0.4733,
+                "width": 0.1878,
+                "height": 0.0816,
+                "unit": "ratio"
+            },
+            "style": {
+                "font": "Slicker",
+                "color": "#FFFFFF",
+                "stroke": "#000000"
+            }
+        },
+        "logo": {
+            "label": "Logo / sponsor poche avant",
+            "type": "image",
+            "view": "front",
+            "price": 7,
+            "required": false,
+            "target": "neutral",
+            "position": {
+                "x": 0.5011,
+                "y": 0.7609,
+                "width": 0.2609,
+                "height": 0.2152,
+                "unit": "ratio"
+            }
+        }
     }
-  }
 }
