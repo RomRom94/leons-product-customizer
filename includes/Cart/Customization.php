@@ -128,6 +128,16 @@ final class Customization {
 			}
 		}
 
+		// `exclusive_with` : deux formes d'une même zone (sponsor en image ou en texte), une seule à la fois.
+		foreach ( $zones_config as $zone_id => $zone ) {
+			$other = is_array( $zone ) && isset( $zone['exclusive_with'] ) ? sanitize_key( (string) $zone['exclusive_with'] ) : '';
+			if ( $other !== '' && isset( $values[ sanitize_key( (string) $zone_id ) ], $values[ $other ] ) ) {
+				/* translators: %1$s, %2$s: zone labels */
+				wc_add_notice( sprintf( __( 'Choisissez « %1$s » ou « %2$s », pas les deux.', 'leons-product-customizer' ), esc_html( (string) $labels[ sanitize_key( (string) $zone_id ) ] ), esc_html( (string) $labels[ $other ] ) ), 'error' );
+				return null;
+			}
+		}
+
 		$result = array(
 			'zones'       => $values,
 			'labels'      => $labels,
@@ -142,7 +152,7 @@ final class Customization {
 				$font = Style_Options::DEFAULT_FONT;
 			}
 			if ( ! Style_Options::is_valid_color( $color ) ) {
-				$color = Style_Options::DEFAULT_COLOR;
+				$color = Style_Options::get_default_color( $config );
 			}
 
 			$result['font']        = $font;

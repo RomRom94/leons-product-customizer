@@ -73,6 +73,16 @@ final class Style_Options {
 		return isset( self::COLORS[ $slug ] );
 	}
 
+	/**
+	 * Couleur présélectionnée : `default_color` de la config produit (ex. blanc sur un vêtement sombre).
+	 *
+	 * @param array<string, mixed> $config
+	 */
+	public static function get_default_color( array $config ): string {
+		$color = isset( $config['default_color'] ) ? (string) $config['default_color'] : '';
+		return self::is_valid_color( $color ) ? $color : self::DEFAULT_COLOR;
+	}
+
 	public static function get_color_hex( string $slug ): string {
 		return self::is_valid_color( $slug ) ? self::COLORS[ $slug ]['hex'] : self::COLORS[ self::DEFAULT_COLOR ]['hex'];
 	}

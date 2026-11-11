@@ -251,7 +251,7 @@ $active_view   = (string) array_key_first( $preview_views );
 										value="<?php echo esc_attr( $color_slug ); ?>"
 										data-lpc-global="color"
 										data-hex="<?php echo esc_attr( $color['hex'] ); ?>"
-										<?php checked( $color_slug, Style_Options::DEFAULT_COLOR ); ?>
+										<?php checked( $color_slug, Style_Options::get_default_color( $config ) ); ?>
 									/>
 									<span class="lpc-customizer__color-dot" style="background-color: <?php echo esc_attr( $color['hex'] ); ?>;" aria-hidden="true"></span>
 									<span class="lpc-customizer__color-label"><?php echo esc_html( $color['label'] ); ?></span>

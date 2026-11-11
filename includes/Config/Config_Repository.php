@@ -83,7 +83,29 @@ final class Config_Repository {
 			return null;
 		}
 
-		return self::get_effective_config( $product );
+		$config = self::get_effective_config( $product );
+		return null === $config ? null : self::filter_zones_for_context( $config );
+	}
+
+	/**
+	 * Zones `"target": "neutral"` (« Produit neutre » du cahier des charges) : retirées quand la fiche
+	 * est vue dans le contexte d'un partenaire/club (?partenaire={id}, repris en POST à l'ajout au panier).
+	 *
+	 * @param array<string, mixed> $config
+	 * @return array<string, mixed>
+	 */
+	private static function filter_zones_for_context( array $config ): array {
+		$raw        = $_REQUEST['partenaire'] ?? $_REQUEST['leons_partner'] ?? 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$partner_id = absint( is_scalar( $raw ) ? $raw : 0 );
+		if ( $partner_id <= 0 || 'partenaires' !== get_post_type( $partner_id ) ) {
+			return $config;
+		}
+
+		$config['zones'] = array_filter(
+			(array) ( $config['zones'] ?? array() ),
+			static fn( $zone ) => ! is_array( $zone ) || 'neutral' !== ( $zone['target'] ?? '' )
+		);
+		return $config;
 	}
 
 	/**
