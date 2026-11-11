@@ -24,10 +24,6 @@
 		this.root = root;
 		this.config = config || {};
 		this.zones = this.config.zones || {};
-		this.faceImage = root.querySelector('[data-lpc-target="faceImage"]');
-		this.backImage = root.querySelector('[data-lpc-target="backImage"]');
-		this.faceCanvas = root.querySelector('[data-lpc-target="faceCanvas"]');
-		this.backCanvas = root.querySelector('[data-lpc-target="backCanvas"]');
 		this.addonsTotalEl = root.querySelector('[data-lpc-addons-total]');
 		this.zoneInputs = root.querySelectorAll('[data-lpc-zone]');
 		// Police : boutons radio (une carte par police, voir templates/product-customizer.php).
@@ -68,27 +64,22 @@
 	LpcCustomizer.prototype.init = function () {
 		var self = this;
 
-		if (this.backImage && this.backCanvas) {
-			this.pairs.push({
-				img: this.backImage,
-				canvas: this.backCanvas,
-				view: 'back',
+		// Une paire image + canvas par vue (front, back, ou une vue par pièce d'un ensemble).
+		this.root.querySelectorAll('[data-lpc-view-image]').forEach(function (img) {
+			var viewName = img.getAttribute('data-lpc-view-image');
+			var canvas = self.root.querySelector('[data-lpc-view-canvas="' + viewName + '"]');
+			if (!canvas) {
+				return;
+			}
+			self.pairs.push({
+				img: img,
+				canvas: canvas,
+				view: viewName,
 				draw: function (ctx, w, h) {
-					self.drawView(ctx, w, h, 'back');
+					self.drawView(ctx, w, h, viewName);
 				},
 			});
-		}
-
-		if (this.faceImage && this.faceCanvas) {
-			this.pairs.push({
-				img: this.faceImage,
-				canvas: this.faceCanvas,
-				view: 'front',
-				draw: function (ctx, w, h) {
-					self.drawView(ctx, w, h, 'front');
-				},
-			});
-		}
+		});
 
 		this.pairs.forEach(function (pair) {
 			self.setupPair(pair);
@@ -549,8 +540,10 @@
 		if (!images) {
 			return;
 		}
-		this.updateImage(this.faceImage, images.front);
-		this.updateImage(this.backImage, images.back);
+		var self = this;
+		this.pairs.forEach(function (pair) {
+			self.updateImage(pair.img, images[pair.view]);
+		});
 	};
 
 	LpcCustomizer.prototype.setAvailable = function (available) {

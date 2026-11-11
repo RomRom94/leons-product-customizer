@@ -26,14 +26,9 @@ foreach ( $zones as $zone ) {
 	}
 }
 
-// Noms des targets JS par vue (front/back sont les seules vues gérées par le JS actuel).
-$view_js_targets = array(
-	'front' => array( 'image' => 'faceImage', 'canvas' => 'faceCanvas' ),
-	'back'  => array( 'image' => 'backImage', 'canvas' => 'backCanvas' ),
-);
-
-// Vues affichées ; à partir de deux, une seule est visible à la fois, choisie par onglets.
-$preview_views = array_intersect_key( $views, $view_js_targets );
+// Vues affichées, dans l'ordre de la config (front, back, ou autant de vues qu'un ensemble a de pièces :
+// haut face, haut dos, bas…) ; à partir de deux, une seule est visible à la fois, choisie par onglets.
+$preview_views = $views;
 $has_tabs      = count( $preview_views ) > 1;
 $active_view   = (string) array_key_first( $preview_views );
 ?>
@@ -72,7 +67,6 @@ $active_view   = (string) array_key_first( $preview_views );
 
 			<?php foreach ( $preview_views as $view_name => $view ) : ?>
 				<?php
-				$targets    = $view_js_targets[ $view_name ];
 				$view_label = isset( $view['label'] ) ? (string) $view['label'] : $view_name;
 				$image      = $initial_images[ $view_name ] ?? array( 'src' => '', 'srcset' => '', 'sizes' => '' );
 				?>
@@ -92,7 +86,7 @@ $active_view   = (string) array_key_first( $preview_views );
 					<div class="lpc-customizer__canvas-wrap">
 						<img
 							class="lpc-customizer__image"
-							data-lpc-target="<?php echo esc_attr( $targets['image'] ); ?>"
+							data-lpc-view-image="<?php echo esc_attr( $view_name ); ?>"
 							src="<?php echo esc_url( $image['src'] ); ?>"
 							<?php if ( $image['srcset'] ) : ?>
 								srcset="<?php echo esc_attr( $image['srcset'] ); ?>"
@@ -100,7 +94,7 @@ $active_view   = (string) array_key_first( $preview_views );
 							<?php endif; ?>
 							alt=""
 						/>
-						<canvas class="lpc-customizer__canvas" data-lpc-target="<?php echo esc_attr( $targets['canvas'] ); ?>" aria-hidden="true"></canvas>
+						<canvas class="lpc-customizer__canvas" data-lpc-view-canvas="<?php echo esc_attr( $view_name ); ?>" aria-hidden="true"></canvas>
 					</div>
 				</div>
 			<?php endforeach; ?>
