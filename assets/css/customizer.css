@@ -123,9 +123,12 @@
 
 .lpc-customizer__view {
 	padding: 1rem;
-	border: 0;
+	border: 1px solid #e5e5e5;
 	border-radius: 1rem;
-	background-color: #f8f3ec;
+	/* Fond blanc (pas de texture derrière le vêtement : `multiply` la ferait apparaître à travers les ghosts
+	   sur fond blanc) ; le relief vient de l'ombre de la carte et des repères d'atelier (cf. canvas-wrap::after). */
+	background-color: #ffffff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 24px -18px rgba(0, 0, 0, 0.25);
 }
 
 .lpc-customizer__view-label {
@@ -148,10 +151,28 @@
 	width: 100%;
 	border-radius: 0.5rem;
 	overflow: hidden;
-	background-color: #f8f3ec;
+	background-color: #ffffff;
 }
 
-/* Les ghosts sont sur fond blanc : `multiply` fond ce blanc dans l'ivoire de la carte (le flocage,
+/* Repères d'atelier : quatre coins de cadrage dorés, comme sur une épreuve d'impression */
+.lpc-customizer__canvas-wrap::after {
+	--lpc-mark: linear-gradient(#a2885f, #a2885f);
+	content: "";
+	position: absolute;
+	inset: 10px;
+	pointer-events: none;
+	background:
+		var(--lpc-mark) top left / 18px 2px no-repeat,
+		var(--lpc-mark) top left / 2px 18px no-repeat,
+		var(--lpc-mark) top right / 18px 2px no-repeat,
+		var(--lpc-mark) top right / 2px 18px no-repeat,
+		var(--lpc-mark) bottom left / 18px 2px no-repeat,
+		var(--lpc-mark) bottom left / 2px 18px no-repeat,
+		var(--lpc-mark) bottom right / 18px 2px no-repeat,
+		var(--lpc-mark) bottom right / 2px 18px no-repeat;
+}
+
+/* Les ghosts sont sur fond blanc : `multiply` fond ce blanc dans la carte (le flocage,
    dessiné sur le canvas au-dessus, garde ses vraies couleurs). */
 .lpc-customizer__image {
 	display: block;
