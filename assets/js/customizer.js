@@ -20,15 +20,23 @@
 		return formatMoney(amount);
 	}
 
+	/*
+	 * Taille maximale du texte (règles client du 20/11/2026) : celle de « ORMESSO » dans la zone
+	 * « Sponsor bas du dos (texte) » du Maillot Storm (cadre en ratio du ghost 1:1). Un texte plus long
+	 * rapetisse pour tenir dans son cadre ; un texte court ne dépasse jamais cette taille.
+	 */
+	var MAX_SIZE_REFERENCE = { text: 'ORMESSO', width: 0.3248, height: 0.1329 };
+
 	function LpcCustomizer(root, config) {
 		this.root = root;
 		this.config = config || {};
 		this.zones = this.config.zones || {};
 		this.addonsTotalEl = root.querySelector('[data-lpc-addons-total]');
 		this.zoneInputs = root.querySelectorAll('[data-lpc-zone]');
-		// Police : boutons radio (une carte par police, voir templates/product-customizer.php).
-		this.fontInputs = root.querySelectorAll('[data-lpc-global="font"]');
-		this.colorInputs = root.querySelectorAll('[data-lpc-global="color"]');
+		// Police et couleur : boutons radio par face (avant / dos), voir templates/product-customizer.php.
+		this.fontInputs = root.querySelectorAll('[data-lpc-style="font"]');
+		this.colorInputs = root.querySelectorAll('[data-lpc-style="color"]');
+		this.maxSizeCache = {};
 		this.fileInputs = root.querySelectorAll('input[type="file"][data-lpc-zone]');
 		this.removeButtons = root.querySelectorAll('[data-lpc-zone-remove]');
 		this.imageCache = {};
@@ -41,24 +49,39 @@
 		this.tabs = Array.prototype.slice.call(root.querySelectorAll('[data-lpc-tab]'));
 	}
 
-	LpcCustomizer.prototype.getGlobalFont = function () {
-		var checked = null;
-		this.fontInputs.forEach(function (input) {
-			if (input.checked) {
-				checked = input;
-			}
-		});
-		return (checked && checked.value) || 'Slicker';
+	// Face d'une zone : `face` explicite, sinon `back` pour la vue dos et `front` pour tout le reste
+	// (même règle que Style_Options::get_zone_face côté PHP).
+	LpcCustomizer.prototype.getZoneFace = function (zone) {
+		if (zone.face === 'front' || zone.face === 'back') {
+			return zone.face;
+		}
+		return zone.view === 'back' ? 'back' : 'front';
 	};
 
-	LpcCustomizer.prototype.getGlobalColor = function () {
+	LpcCustomizer.prototype.getCheckedStyle = function (inputs, face) {
 		var checked = null;
-		this.colorInputs.forEach(function (input) {
-			if (input.checked) {
+		var fallback = null;
+		inputs.forEach(function (input) {
+			if (!input.checked) {
+				return;
+			}
+			if (input.getAttribute('data-lpc-face') === face) {
 				checked = input;
+			} else if (!fallback) {
+				fallback = input;
 			}
 		});
-		return (checked && checked.getAttribute('data-hex')) || '#000000';
+		return checked || fallback;
+	};
+
+	LpcCustomizer.prototype.getFaceFont = function (face) {
+		var input = this.getCheckedStyle(this.fontInputs, face);
+		return (input && input.value) || 'Slicker';
+	};
+
+	LpcCustomizer.prototype.getFaceColor = function (face) {
+		var input = this.getCheckedStyle(this.colorInputs, face);
+		return (input && input.getAttribute('data-hex')) || '#000000';
 	};
 
 	LpcCustomizer.prototype.init = function () {
@@ -268,8 +291,10 @@
 			} else {
 				y = h * (typeof pos.y === 'number' ? pos.y : 0.5);
 			}
-			var font = self.getGlobalFont();
-			var color = self.getGlobalColor();
+			var face = self.getZoneFace(zone);
+			var font = self.getFaceFont(face);
+			var color = self.getFaceColor(face);
+			var maxSize = self.getMaxFontSize(ctx, w, h, font);
 
 			// Zone avec un cadre (width/height) : le texte est ajusté pour tenir dedans, quelle que soit la police
 			if (typeof pos.width === 'number' && typeof pos.height === 'number') {
@@ -279,12 +304,13 @@
 						font: font,
 						color: color,
 						stroke: style.stroke,
+						maxSize: maxSize,
 					});
 				});
 				return;
 			}
 
-			var baseSize = Math.round(w * (style.base_size_ratio || 0.05));
+			var baseSize = Math.min(Math.round(w * (style.base_size_ratio || 0.05)), maxSize);
 			var maxWidth = w * (style.max_width_ratio || 0.85);
 			var fontSize = self.fitFontSize(ctx, value, maxWidth, baseSize, font);
 			self.drawText(ctx, value, x, y, fontSize, {
@@ -387,16 +413,17 @@
 	};
 
 	/*
-	 * Texte centré dans un cadre (cx, cy = centre ; boxW × boxH ; incliné de `rotation` radians), avec une marge intérieure : la taille
-	 * part de la hauteur du cadre et diminue jusqu'à ce que le texte réellement dessiné (mesure des
-	 * glyphes, pas de l'em) tienne en largeur et en hauteur. Centrage vertical sur les glyphes eux-mêmes :
-	 * `textBaseline: middle` se cale sur l'em et décentre les capitales selon la police.
+	 * Plus grande taille (px) à laquelle un texte tient dans un cadre boxW × boxH, avec une marge intérieure :
+	 * la taille part de la hauteur du cadre (plafonnée à `maxSize`) et diminue jusqu'à ce que le texte
+	 * réellement dessiné (mesure des glyphes, pas de l'em) tienne en largeur et en hauteur.
 	 */
-	LpcCustomizer.prototype.drawTextInBox = function (ctx, text, cx, cy, boxW, boxH, rotation, style) {
-		var font = style.font || 'Slicker';
+	LpcCustomizer.prototype.fitTextInBox = function (ctx, text, boxW, boxH, font, maxSize) {
 		var maxW = boxW * 0.88;
 		var maxH = boxH * 0.72;
 		var size = Math.max(8, Math.round(boxH * 1.5));
+		if (typeof maxSize === 'number' && maxSize > 0) {
+			size = Math.min(size, Math.round(maxSize));
+		}
 		var metrics;
 
 		ctx.textAlign = 'center';
@@ -411,7 +438,42 @@
 				break;
 			}
 		}
+		if (!metrics) {
+			ctx.font = "normal " + size + "px '" + font + "', sans-serif";
+			metrics = ctx.measureText(text);
+		}
+		return { size: size, metrics: metrics };
+	};
 
+	// Taille plafond pour une police et une taille de canvas (voir MAX_SIZE_REFERENCE).
+	LpcCustomizer.prototype.getMaxFontSize = function (ctx, w, h, font) {
+		var key = font + '|' + w + '|' + h;
+		if (!this.maxSizeCache[key]) {
+			this.maxSizeCache[key] = this.fitTextInBox(
+				ctx,
+				MAX_SIZE_REFERENCE.text,
+				w * MAX_SIZE_REFERENCE.width,
+				h * MAX_SIZE_REFERENCE.height,
+				font
+			).size;
+		}
+		return this.maxSizeCache[key];
+	};
+
+	/*
+	 * Texte centré dans un cadre (cx, cy = centre ; boxW × boxH ; incliné de `rotation` radians). Centrage
+	 * vertical sur les glyphes eux-mêmes : `textBaseline: middle` se cale sur l'em et décentre les
+	 * capitales selon la police.
+	 */
+	LpcCustomizer.prototype.drawTextInBox = function (ctx, text, cx, cy, boxW, boxH, rotation, style) {
+		var font = style.font || 'Slicker';
+		var fit = this.fitTextInBox(ctx, text, boxW, boxH, font, style.maxSize);
+		var size = fit.size;
+		var metrics = fit.metrics;
+
+		ctx.font = "normal " + size + "px '" + font + "', sans-serif";
+		ctx.textAlign = 'center';
+		ctx.textBaseline = 'alphabetic';
 		var baselineY = (metrics.actualBoundingBoxAscent - metrics.actualBoundingBoxDescent) / 2;
 		ctx.save();
 		ctx.translate(cx, cy);

@@ -86,4 +86,57 @@ final class Style_Options {
 	public static function get_color_hex( string $slug ): string {
 		return self::is_valid_color( $slug ) ? self::COLORS[ $slug ]['hex'] : self::COLORS[ self::DEFAULT_COLOR ]['hex'];
 	}
+
+	/*
+	 * Faces de flocage : police et couleur se choisissent par face (règles client du 20/11/2026).
+	 * L'avant couvre aussi les pièces sans dos (short, pantalon d'un ensemble) : un produit sans
+	 * flocage au dos n'a donc qu'un seul choix.
+	 */
+	public const FACE_FRONT = 'front';
+	public const FACE_BACK  = 'back';
+
+	/**
+	 * Champs POST par face (police, couleur).
+	 *
+	 * @var array<string, array{font: string, color: string}>
+	 */
+	public const FACE_FIELDS = array(
+		self::FACE_FRONT => array(
+			'font'  => 'lpc_font',
+			'color' => 'lpc_color',
+		),
+		self::FACE_BACK  => array(
+			'font'  => 'lpc_font_back',
+			'color' => 'lpc_color_back',
+		),
+	);
+
+	/**
+	 * Face d'une zone : `face` explicite, sinon déduite de la vue (`back` = dos, tout le reste = avant).
+	 *
+	 * @param array<string, mixed> $zone
+	 */
+	public static function get_zone_face( array $zone ): string {
+		$face = isset( $zone['face'] ) ? (string) $zone['face'] : '';
+		if ( self::FACE_BACK === $face || self::FACE_FRONT === $face ) {
+			return $face;
+		}
+		return isset( $zone['view'] ) && 'back' === $zone['view'] ? self::FACE_BACK : self::FACE_FRONT;
+	}
+
+	/**
+	 * Faces qui portent au moins une zone texte, dans l'ordre avant → dos.
+	 *
+	 * @param array<string, mixed> $config
+	 * @return string[]
+	 */
+	public static function get_text_faces( array $config ): array {
+		$faces = array();
+		foreach ( (array) ( $config['zones'] ?? array() ) as $zone ) {
+			if ( is_array( $zone ) && 'text' === ( $zone['type'] ?? '' ) ) {
+				$faces[ self::get_zone_face( $zone ) ] = true;
+			}
+		}
+		return array_values( array_filter( array( self::FACE_FRONT, self::FACE_BACK ), static fn( $f ) => isset( $faces[ $f ] ) ) );
+	}
 }

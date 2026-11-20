@@ -18,14 +18,6 @@ defined( 'ABSPATH' ) || exit;
 $views = isset( $config['views'] ) && is_array( $config['views'] ) ? array_intersect_key( $config['views'], View_Images::get_views( $config ) ) : array();
 $zones = isset( $config['zones'] ) && is_array( $config['zones'] ) ? $config['zones'] : array();
 
-$has_text_zone = false;
-foreach ( $zones as $zone ) {
-	if ( is_array( $zone ) && isset( $zone['type'] ) && 'text' === $zone['type'] ) {
-		$has_text_zone = true;
-		break;
-	}
-}
-
 // Vues affichées, dans l'ordre de la config (front, back, ou autant de vues qu'un ensemble a de pièces :
 // haut face, haut dos, bas…) ; à partir de deux, une seule est visible à la fois, choisie par onglets.
 $preview_views = $views;
@@ -102,7 +94,7 @@ $active_view   = (string) array_key_first( $preview_views );
 
 		<?php if ( $zones ) : ?>
 		<?php
-		// Champs regroupés : textes, puis logos et sponsors, puis style du flocage (police, couleur).
+		// Champs regroupés : textes et style de chaque face (avant, dos), puis logos et sponsors.
 		$text_zones  = array_filter( $zones, static fn( $z ) => is_array( $z ) && 'text' === ( $z['type'] ?? '' ) );
 		$image_zones = array_filter( $zones, static fn( $z ) => is_array( $z ) && 'image' === ( $z['type'] ?? '' ) );
 		$field_head  = static function ( string $zone_id, array $zone ): void {
@@ -128,10 +120,25 @@ $active_view   = (string) array_key_first( $preview_views );
 		<fieldset class="lpc-customizer__fields">
 			<legend class="lpc-customizer__fields-legend screen-reader-text"><?php esc_html_e( 'Personnalisation', 'leons-product-customizer' ); ?></legend>
 
-			<?php if ( $text_zones ) : ?>
-				<div class="lpc-customizer__group" role="group" aria-labelledby="lpc-group-text">
-					<p class="lpc-customizer__group-title" id="lpc-group-text"><?php esc_html_e( 'Textes', 'leons-product-customizer' ); ?></p>
-					<?php foreach ( $text_zones as $zone_id => $zone ) : ?>
+			<?php
+			// Un bloc par face (avant, puis dos) : ses champs texte, puis la police et la couleur qui s'y
+			// appliquent, au plus près des textes qu'elles stylent. Un produit sans dos n'a qu'un bloc « Textes ».
+			$text_faces  = Style_Options::get_text_faces( $config );
+			$face_titles = array(
+				Style_Options::FACE_FRONT => __( 'Textes — avant', 'leons-product-customizer' ),
+				Style_Options::FACE_BACK  => __( 'Textes — dos', 'leons-product-customizer' ),
+			);
+			?>
+			<?php foreach ( $text_faces as $face ) : ?>
+				<?php
+				$fields     = Style_Options::FACE_FIELDS[ $face ];
+				$group_id   = 'lpc-group-text-' . $face;
+				$title      = count( $text_faces ) > 1 ? $face_titles[ $face ] : __( 'Textes', 'leons-product-customizer' );
+				$face_zones = array_filter( $text_zones, static fn( $z ) => Style_Options::get_zone_face( $z ) === $face );
+				?>
+				<div class="lpc-customizer__group" role="group" aria-labelledby="<?php echo esc_attr( $group_id ); ?>" data-lpc-style-group="<?php echo esc_attr( $face ); ?>">
+					<p class="lpc-customizer__group-title" id="<?php echo esc_attr( $group_id ); ?>"><?php echo esc_html( $title ); ?></p>
+					<?php foreach ( $face_zones as $zone_id => $zone ) : ?>
 						<?php
 						$zone_id    = sanitize_key( (string) $zone_id );
 						$price      = isset( $zone['price'] ) ? (float) $zone['price'] : 0.0;
@@ -161,8 +168,50 @@ $active_view   = (string) array_key_first( $preview_views );
 							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
+					<div class="lpc-customizer__field lpc-customizer__field--font" role="radiogroup" aria-labelledby="<?php echo esc_attr( $group_id ); ?>-font">
+						<p class="lpc-customizer__field-head" id="<?php echo esc_attr( $group_id ); ?>-font"><span class="lpc-customizer__field-label"><?php esc_html_e( 'Police', 'leons-product-customizer' ); ?></span></p>
+						<div class="lpc-customizer__font-list">
+							<?php foreach ( Style_Options::FONTS as $font_family => $font_label ) : ?>
+								<label class="lpc-customizer__font-option">
+									<input
+										type="radio"
+										name="<?php echo esc_attr( $fields['font'] ); ?>"
+										value="<?php echo esc_attr( $font_family ); ?>"
+										data-lpc-style="font"
+										data-lpc-face="<?php echo esc_attr( $face ); ?>"
+										<?php checked( $font_family, Style_Options::DEFAULT_FONT ); ?>
+									/>
+									<span class="lpc-customizer__font-sample" style="font-family: '<?php echo esc_attr( $font_family ); ?>', sans-serif;" aria-hidden="true">10</span>
+									<span class="lpc-customizer__font-label"><?php echo esc_html( $font_label ); ?></span>
+								</label>
+							<?php endforeach; ?>
+						</div>
+					</div>
+
+					<div class="lpc-customizer__field lpc-customizer__field--color" role="radiogroup" aria-labelledby="<?php echo esc_attr( $group_id ); ?>-color">
+						<p class="lpc-customizer__field-head" id="<?php echo esc_attr( $group_id ); ?>-color">
+							<span class="lpc-customizer__field-label"><?php esc_html_e( 'Couleur', 'leons-product-customizer' ); ?></span>
+						</p>
+						<div class="lpc-customizer__color-list">
+							<?php foreach ( Style_Options::COLORS as $color_slug => $color ) : ?>
+								<label class="lpc-customizer__color-swatch" title="<?php echo esc_attr( $color['label'] ); ?>">
+									<input
+										type="radio"
+										name="<?php echo esc_attr( $fields['color'] ); ?>"
+										value="<?php echo esc_attr( $color_slug ); ?>"
+										data-lpc-style="color"
+										data-lpc-face="<?php echo esc_attr( $face ); ?>"
+										data-hex="<?php echo esc_attr( $color['hex'] ); ?>"
+										<?php checked( $color_slug, Style_Options::get_default_color( $config ) ); ?>
+									/>
+									<span class="lpc-customizer__color-dot" style="background-color: <?php echo esc_attr( $color['hex'] ); ?>;" aria-hidden="true"></span>
+									<span class="lpc-customizer__color-label"><?php echo esc_html( $color['label'] ); ?></span>
+								</label>
+							<?php endforeach; ?>
+						</div>
+					</div>
 				</div>
-			<?php endif; ?>
+			<?php endforeach; ?>
 
 			<?php if ( $image_zones ) : ?>
 				<div class="lpc-customizer__group" role="group" aria-labelledby="lpc-group-images">
@@ -209,52 +258,6 @@ $active_view   = (string) array_key_first( $preview_views );
 				</div>
 			<?php endif; ?>
 
-			<?php if ( $has_text_zone ) : ?>
-				<div class="lpc-customizer__group" role="group" aria-labelledby="lpc-group-style">
-					<p class="lpc-customizer__group-title" id="lpc-group-style"><?php esc_html_e( 'Style du flocage', 'leons-product-customizer' ); ?></p>
-
-					<div class="lpc-customizer__field lpc-customizer__field--font" role="radiogroup" aria-labelledby="lpc-font-title">
-						<p class="lpc-customizer__field-head" id="lpc-font-title"><span class="lpc-customizer__field-label"><?php esc_html_e( 'Police', 'leons-product-customizer' ); ?></span></p>
-						<div class="lpc-customizer__font-list">
-							<?php foreach ( Style_Options::FONTS as $font_family => $font_label ) : ?>
-								<label class="lpc-customizer__font-option">
-									<input
-										type="radio"
-										name="lpc_font"
-										value="<?php echo esc_attr( $font_family ); ?>"
-										data-lpc-global="font"
-										<?php checked( $font_family, Style_Options::DEFAULT_FONT ); ?>
-									/>
-									<span class="lpc-customizer__font-sample" style="font-family: '<?php echo esc_attr( $font_family ); ?>', sans-serif;" aria-hidden="true">10</span>
-									<span class="lpc-customizer__font-label"><?php echo esc_html( $font_label ); ?></span>
-								</label>
-							<?php endforeach; ?>
-						</div>
-					</div>
-
-					<div class="lpc-customizer__field lpc-customizer__field--color" role="radiogroup" aria-labelledby="lpc-color-title">
-						<p class="lpc-customizer__field-head" id="lpc-color-title">
-							<span class="lpc-customizer__field-label"><?php esc_html_e( 'Couleur', 'leons-product-customizer' ); ?></span>
-						</p>
-						<div class="lpc-customizer__color-list">
-							<?php foreach ( Style_Options::COLORS as $color_slug => $color ) : ?>
-								<label class="lpc-customizer__color-swatch" title="<?php echo esc_attr( $color['label'] ); ?>">
-									<input
-										type="radio"
-										name="lpc_color"
-										value="<?php echo esc_attr( $color_slug ); ?>"
-										data-lpc-global="color"
-										data-hex="<?php echo esc_attr( $color['hex'] ); ?>"
-										<?php checked( $color_slug, Style_Options::get_default_color( $config ) ); ?>
-									/>
-									<span class="lpc-customizer__color-dot" style="background-color: <?php echo esc_attr( $color['hex'] ); ?>;" aria-hidden="true"></span>
-									<span class="lpc-customizer__color-label"><?php echo esc_html( $color['label'] ); ?></span>
-								</label>
-							<?php endforeach; ?>
-						</div>
-					</div>
-				</div>
-			<?php endif; ?>
 		</fieldset>
 
 		<p class="lpc-customizer__total">

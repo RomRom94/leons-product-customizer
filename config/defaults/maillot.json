@@ -71,34 +71,12 @@
             "price": 7,
             "required": false,
             "target": "neutral",
-            "exclusive_with": "sponsor_manche_g_texte",
             "position": {
                 "x": 0.25,
                 "y": 0.3557,
                 "width": 0.0717,
                 "height": 0.1127,
                 "unit": "ratio"
-            }
-        },
-        "sponsor_manche_g_texte": {
-            "label": "Sponsor manche gauche (texte)",
-            "type": "text",
-            "view": "front",
-            "price": 7,
-            "required": false,
-            "target": "neutral",
-            "max_length": 20,
-            "position": {
-                "x": 0.25,
-                "y": 0.3557,
-                "width": 0.0717,
-                "height": 0.1127,
-                "unit": "ratio"
-            },
-            "style": {
-                "font": "Slicker",
-                "color": "#FFFFFF",
-                "stroke": "#000000"
             }
         },
         "sponsor_manche_d": {
@@ -108,34 +86,12 @@
             "price": 7,
             "required": false,
             "target": "neutral",
-            "exclusive_with": "sponsor_manche_d_texte",
             "position": {
                 "x": 0.7499,
                 "y": 0.3609,
                 "width": 0.07,
                 "height": 0.1173,
                 "unit": "ratio"
-            }
-        },
-        "sponsor_manche_d_texte": {
-            "label": "Sponsor manche droite (texte)",
-            "type": "text",
-            "view": "front",
-            "price": 7,
-            "required": false,
-            "target": "neutral",
-            "max_length": 20,
-            "position": {
-                "x": 0.7499,
-                "y": 0.3609,
-                "width": 0.07,
-                "height": 0.1173,
-                "unit": "ratio"
-            },
-            "style": {
-                "font": "Slicker",
-                "color": "#FFFFFF",
-                "stroke": "#000000"
             }
         },
         "initiales": {

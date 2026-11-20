@@ -36,7 +36,7 @@ final class Customization {
 		$values    = array();
 		$labels    = array();
 		$total     = 0.0;
-		$has_text  = false;
+		$faces     = array();
 
 		foreach ( $zones_config as $zone_id => $zone ) {
 			if ( ! is_string( $zone_id ) || $zone_id === '' || ! is_array( $zone ) ) {
@@ -81,7 +81,8 @@ final class Customization {
 
 				$values[ $zone_id ] = $value;
 				$labels[ $zone_id ] = $label;
-				$has_text           = true;
+
+				$faces[ Style_Options::get_zone_face( $zone ) ] = true;
 
 				if ( $price > 0 ) {
 					$total += $price;
@@ -144,9 +145,14 @@ final class Customization {
 			'addon_total' => round( $total, wc_get_price_decimals() ),
 		);
 
-		if ( $has_text ) {
-			$font  = isset( $_POST['lpc_font'] ) ? sanitize_text_field( wp_unslash( $_POST['lpc_font'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			$color = isset( $_POST['lpc_color'] ) ? sanitize_key( wp_unslash( $_POST['lpc_color'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// Police et couleur par face (avant / dos), seulement pour les faces qui portent du texte saisi.
+		$styles = array();
+		foreach ( Style_Options::FACE_FIELDS as $face => $fields ) {
+			if ( empty( $faces[ $face ] ) ) {
+				continue;
+			}
+			$font  = isset( $_POST[ $fields['font'] ] ) ? sanitize_text_field( wp_unslash( $_POST[ $fields['font'] ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$color = isset( $_POST[ $fields['color'] ] ) ? sanitize_key( wp_unslash( $_POST[ $fields['color'] ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 			if ( ! Style_Options::is_valid_font( $font ) ) {
 				$font = Style_Options::DEFAULT_FONT;
@@ -155,14 +161,51 @@ final class Customization {
 				$color = Style_Options::get_default_color( $config );
 			}
 
-			$result['font']        = $font;
-			$result['font_label']  = Style_Options::FONTS[ $font ];
-			$result['color']       = $color;
-			$result['color_label'] = Style_Options::COLORS[ $color ]['label'];
-			$result['color_hex']   = Style_Options::get_color_hex( $color );
+			$styles[ $face ] = array(
+				'font'        => $font,
+				'font_label'  => Style_Options::FONTS[ $font ],
+				'color'       => $color,
+				'color_label' => Style_Options::COLORS[ $color ]['label'],
+				'color_hex'   => Style_Options::get_color_hex( $color ),
+			);
+		}
+
+		if ( $styles ) {
+			$result['styles']     = $styles;
+			$result['multi_face'] = count( Style_Options::get_text_faces( $config ) ) > 1;
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Styles par face ; les lignes enregistrées avant le 20/11/2026 n'ont qu'un style global (`font_label`, `color_label`).
+	 *
+	 * @param array<string, mixed> $customization
+	 * @return array<string, array{font_label: string, color_label: string}>
+	 */
+	private static function get_styles( array $customization ): array {
+		if ( isset( $customization['styles'] ) && is_array( $customization['styles'] ) ) {
+			$styles = array();
+			foreach ( $customization['styles'] as $face => $style ) {
+				if ( is_array( $style ) && isset( $style['font_label'], $style['color_label'] ) ) {
+					$styles[ (string) $face ] = array(
+						'font_label'  => (string) $style['font_label'],
+						'color_label' => (string) $style['color_label'],
+					);
+				}
+			}
+			return $styles;
+		}
+		if ( isset( $customization['font_label'], $customization['color_label'] ) ) {
+			return array(
+				Style_Options::FACE_FRONT => array(
+					'font_label'  => (string) $customization['font_label'],
+					'color_label' => (string) $customization['color_label'],
+				),
+			);
+		}
+		return array();
 	}
 
 	/**
@@ -213,15 +256,21 @@ final class Customization {
 			$has_text_row = true;
 		}
 
-		if ( $has_text_row && isset( $customization['font_label'], $customization['color_label'] ) ) {
-			$rows[] = array(
-				'key'   => __( 'Police', 'leons-product-customizer' ),
-				'value' => (string) $customization['font_label'],
-			);
-			$rows[] = array(
-				'key'   => __( 'Couleur', 'leons-product-customizer' ),
-				'value' => (string) $customization['color_label'],
-			);
+		if ( $has_text_row ) {
+			foreach ( self::get_styles( $customization ) as $face => $style ) {
+				$suffix = '';
+				if ( ! empty( $customization['multi_face'] ) ) {
+					$suffix = Style_Options::FACE_BACK === $face ? __( ' (dos)', 'leons-product-customizer' ) : __( ' (avant)', 'leons-product-customizer' );
+				}
+				$rows[] = array(
+					'key'   => __( 'Police', 'leons-product-customizer' ) . $suffix,
+					'value' => $style['font_label'],
+				);
+				$rows[] = array(
+					'key'   => __( 'Couleur', 'leons-product-customizer' ) . $suffix,
+					'value' => $style['color_label'],
+				);
+			}
 		}
 
 		return $rows;
