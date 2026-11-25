@@ -24,8 +24,16 @@
 	 * Taille maximale du texte (règles client du 20/11/2026) : celle de « ORMESSO » dans la zone
 	 * « Sponsor bas du dos (texte) » du Maillot Storm (cadre en ratio du ghost 1:1). Un texte plus long
 	 * rapetisse pour tenir dans son cadre ; un texte court ne dépasse jamais cette taille.
+	 * Le plafond ne vaut que pour le texte en lettres (noms, initiales, sponsor texte) : les numéros
+	 * (dos, short, bas d'ensemble) ont la taille d'un numéro à deux chiffres dans leur cadre, même avec
+	 * un seul chiffre (précisé le 25/11/2026, voir getNumberFontSize).
 	 */
 	var MAX_SIZE_REFERENCE = { text: 'ORMESSO', width: 0.3248, height: 0.1329 };
+
+	// Zones numéro : `number`, `bas_number`, `numero_short`…
+	function isNumberZone(zoneId) {
+		return /(^|_)(number|numero)(_|$)/.test(zoneId);
+	}
 
 	function LpcCustomizer(root, config) {
 		this.root = root;
@@ -294,7 +302,9 @@
 			var face = self.getZoneFace(zone);
 			var font = self.getFaceFont(face);
 			var color = self.getFaceColor(face);
-			var maxSize = self.getMaxFontSize(ctx, w, h, font);
+			var maxSize = isNumberZone(zoneId)
+				? self.getNumberFontSize(ctx, w, h, font, zone)
+				: self.getMaxFontSize(ctx, w, h, font);
 
 			// Zone avec un cadre (width/height) : le texte est ajusté pour tenir dedans, quelle que soit la police
 			if (typeof pos.width === 'number' && typeof pos.height === 'number') {
@@ -310,7 +320,10 @@
 				return;
 			}
 
-			var baseSize = Math.min(Math.round(w * (style.base_size_ratio || 0.05)), maxSize);
+			var baseSize = Math.round(w * (style.base_size_ratio || 0.05));
+			if (maxSize) {
+				baseSize = Math.min(baseSize, maxSize);
+			}
 			var maxWidth = w * (style.max_width_ratio || 0.85);
 			var fontSize = self.fitFontSize(ctx, value, maxWidth, baseSize, font);
 			self.drawText(ctx, value, x, y, fontSize, {
@@ -443,6 +456,23 @@
 			metrics = ctx.measureText(text);
 		}
 		return { size: size, metrics: metrics };
+	};
+
+	/*
+	 * Taille d'un numéro : celle d'un numéro de `max_length` chiffres (2 par défaut) dans son cadre, pour
+	 * qu'un seul chiffre ait la même hauteur que deux (demande du 25/11/2026). Sans cadre : pas de plafond.
+	 */
+	LpcCustomizer.prototype.getNumberFontSize = function (ctx, w, h, font, zone) {
+		var pos = zone.position || {};
+		if (typeof pos.width !== 'number' || typeof pos.height !== 'number') {
+			return null;
+		}
+		var digits = Math.max(1, Math.min(3, parseInt(zone.max_length, 10) || 2));
+		var key = 'num|' + font + '|' + w + '|' + h + '|' + pos.width + '|' + pos.height + '|' + digits;
+		if (!this.maxSizeCache[key]) {
+			this.maxSizeCache[key] = this.fitTextInBox(ctx, new Array(digits + 1).join('8'), w * pos.width, h * pos.height, font).size;
+		}
+		return this.maxSizeCache[key];
 	};
 
 	// Taille plafond pour une police et une taille de canvas (voir MAX_SIZE_REFERENCE).
