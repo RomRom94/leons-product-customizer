@@ -159,6 +159,7 @@ $active_view   = (string) array_key_first( $preview_views );
 								autocomplete="off"
 								<?php echo $max_length > 0 ? 'maxlength="' . esc_attr( (string) $max_length ) . '"' : ''; ?>
 								<?php echo $pattern !== '' ? 'pattern="' . esc_attr( $pattern ) . '"' : ''; ?>
+								<?php echo preg_match( '/^\[0-9\](\{|\+|\*)/', $pattern ) ? 'inputmode="numeric"' : ''; ?>
 								<?php echo $required ? 'required' : ''; ?>
 							/>
 							<?php if ( $max_length > 0 ) : ?>

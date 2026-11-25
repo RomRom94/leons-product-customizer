@@ -35,6 +35,38 @@
 		return /(^|_)(number|numero)(_|$)/.test(zoneId);
 	}
 
+	/*
+	 * Saisie filtrée en direct (25/11/2026) : l'attribut `pattern` ne bloque qu'à l'envoi, on pouvait donc taper
+	 * des lettres dans un numéro (et les voir sur l'aperçu). Pour un pattern de la forme `[classe]{m,n}`, `+` ou `*`,
+	 * chaque caractère hors de la classe est retiré à la frappe ou au collage. Le serveur revérifie le pattern.
+	 */
+	function allowedCharsRegExp(pattern) {
+		var m = /^(\[[^\]]+\])(\{\d+(,\d*)?\}|\+|\*)$/.exec(pattern || '');
+		if (!m) {
+			return null;
+		}
+		try {
+			return new RegExp('^' + m[1] + '$');
+		} catch (e) {
+			return null;
+		}
+	}
+
+	function filterInput(input, allowed) {
+		var value = input.value;
+		var kept = value.split('').filter(function (ch) {
+			return allowed.test(ch);
+		}).join('');
+		if (kept === value) {
+			return;
+		}
+		var caret = (input.selectionStart || value.length) - (value.length - kept.length);
+		input.value = kept;
+		try {
+			input.setSelectionRange(Math.max(0, caret), Math.max(0, caret));
+		} catch (e) {}
+	}
+
 	function LpcCustomizer(root, config) {
 		this.root = root;
 		this.config = config || {};
@@ -117,7 +149,11 @@
 		});
 
 		this.zoneInputs.forEach(function (input) {
+			var allowed = allowedCharsRegExp(input.getAttribute('pattern'));
 			input.addEventListener('input', function () {
+				if (allowed) {
+					filterInput(input, allowed);
+				}
 				self.render();
 				self.updateAddonsTotal();
 			});
